@@ -1,0 +1,20 @@
+{
+  "data_path": "~/.cache/kagglehub/datasets/datatattle/dt-mart-market-mix-modeling/versions/1/Secondfile.csv",
+  "special_sales_path": "~/.cache/kagglehub/datasets/datatattle/dt-mart-market-mix-modeling/versions/1/SpecialSale.csv",
+  "kpi_column": "total_gmv",
+  "date_column": "month",
+  "date_format": "%b %Y",
+  "media_channels": ["TV", "Digital", "Sponsorship", "Content.Marketing", "Online.marketing", "Affiliates", "SEM", "Radio"],
+  "control_variables": ["NPS", "total_Discount"],
+  "models": ["ridge", "pymc", "lightweight"],
+  "adstock_max_lag": 3,
+  "hill_slope": 2.0,
+  "hill_ec": 0.5,
+  "n_bootstrap": 200,
+  "pymc_samples": 1000,
+  "pymc_tune": 500,
+  "holdout_periods": 2,
+  "currency": "INR",
+  "results_dir": "./results",
+  "rounds_dir": "./rounds"
+}
