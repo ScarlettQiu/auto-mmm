@@ -1,6 +1,6 @@
 # Auto-MMM
 
-Autonomous Marketing Mix Modeling inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch) and [autokaggle](https://github.com/ShaneZhong/autokaggle). Point an AI agent at `program.md`, and it runs three MMM models, critiques its own analysis, iterates on configuration, and produces a stakeholder PowerPoint — without human involvement.
+Autonomous Marketing Mix Modeling powered by Claude. Point an AI agent at `program.md`, and it runs three MMM models, critiques its own analysis, iterates on configuration, and produces a stakeholder PowerPoint — without human involvement.
 
 ---
 
@@ -247,10 +247,3 @@ lightweight_mmm   # Google JAX-based MMM
 jax jaxlib        # required for lightweight_mmm
 ```
 
----
-
-## Acknowledgements
-
-- [Andrej Karpathy](https://github.com/karpathy) — autoresearch: autonomous improvement loops via `program.md`
-- [ShaneZhong](https://github.com/ShaneZhong) — autokaggle: multi-agent specialist design
-- [datatattle](https://www.kaggle.com/datasets/datatattle/dt-mart-market-mix-modeling) — DT Mart MMM dataset
