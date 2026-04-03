@@ -42,6 +42,32 @@ Round 2+: Tuner → Models → Analyst → Critic → Reporter
 
 ---
 
+## Why Three MMM Models?
+
+No single MMM model is right in all situations. Each makes different assumptions about how media drives sales — and those assumptions matter a lot when you're deciding where to shift budget.
+
+Running three models in parallel solves three real problems:
+
+**1. No model is always correct**
+Ridge is fast and transparent but assumes a linear spend-response relationship and can shrink small channel effects to zero. PyMC captures diminishing returns and uncertainty but is slow and sensitive to prior choices. LightweightMMM enforces positive-only channel effects but may over-attribute to correlated channels. Each has blind spots the others don't share.
+
+**2. Agreement builds confidence, disagreement reveals risk**
+When all three models rank the same channel as the top performer, you can act with confidence. When they disagree, that's a signal — either the data is too thin to isolate that channel's effect, or there's collinearity between channels that needs investigating. A single model can't tell you this.
+
+**3. Different models suit different data situations**
+
+| Situation | Best model |
+|---|---|
+| Quick first pass, any data size | Ridge — runs in seconds |
+| Small dataset (<30 periods) | PyMC — priors compensate for thin data |
+| Production budget decisions | PyMC — full credible intervals |
+| Need positive-constrained estimates fast | LightweightMMM |
+| Final validation | All three — consensus = trustworthy |
+
+The auto-MMM loop runs all three, scores their agreement, and flags where they diverge — so you know exactly how much to trust each finding before it reaches the report.
+
+---
+
 ## Three MMM Models
 
 | Model | Method | Uncertainty | Requires |
@@ -54,34 +80,52 @@ All three models fall back gracefully if optional dependencies are missing — R
 
 ---
 
-## What Each Agent Does
+## The Four Agent Roles
+
+Auto-MMM uses four specialist agents coordinated by a single orchestrator (`program.md`). Separating the roles matters — an agent that both runs models and writes the report will unconsciously justify whatever the models produce. The Critic exists precisely to prevent this.
 
 ### Tuner
-- Reads previous round's R², MAPE, and ROI agreement scores
-- Proposes exactly **one** config change per round (keeps experiments comparable)
-- Decision rules: reduce adstock lag for zero-ROI channels, adjust Hill slope when models disagree, increase PyMC samples when Bayesian fit is poor
+**Role:** Iterates model configuration between rounds to improve fit.
+
+The Tuner reads the previous round's performance metrics (R², MAPE, ROI agreement scores) and proposes exactly **one** config change — adstock decay, Hill slope, or PyMC sampling depth. One change per round keeps experiments comparable so you can measure what actually helped.
+
+Decision rules:
+- 6 channels showing zero ROI → reduce `adstock_max_lag` (cross-channel bleed on small data)
+- Models strongly disagree on top channel (CV > 50%) → reduce `hill_slope` to flatten saturation
+- PyMC test MAPE > 40% → increase sampling iterations
+- All models test MAPE < 15% → no change needed
 
 ### Analyst
-- Identifies top channels by consensus ROI (appears in top 3 for 2+ models)
-- Flags negative ROI values, high CV% channels, and plausibility issues
-- Writes `rounds/R{N}_analysis.md` in under 400 words with actual numbers
+**Role:** Interprets raw numbers and writes a business narrative.
 
-### Critic (most important)
-Runs six checks before any report is published:
+The Analyst reads the model output files and translates them into findings: which channels have the highest consensus ROI, where models agree vs disagree, whether contribution percentages are plausible, and what the data can and cannot tell you. It writes `rounds/R{N}_analysis.md` in under 400 words, always referencing actual numbers.
+
+The Analyst is deliberately kept separate from the Critic — it should state what it sees, not pre-emptively soften findings out of caution.
+
+### Critic
+**Role:** Quality gate — challenges the Analyst before anything reaches the report.
+
+The Critic is the most important agent. It runs six checks on the Analyst's interpretation:
 
 | Check | What it catches |
 |---|---|
-| Overfitting | R²=1.0 on small samples — Ridge ROI numbers become unreliable |
-| Sign correctness | Negative ROI despite real spend — collinearity or data issue |
-| Contribution plausibility | Media <5% or >80% of KPI — model failure |
-| Consensus honesty | Analyst cherry-picked agreeing models, ignored disagreements |
-| Collinearity | Channels that move together confusing the model |
-| Sample size caveat | 12 monthly periods — limitation must be communicated |
+| **Overfitting** | R²=1.0 on small samples — Ridge ROI numbers become unreliable |
+| **Sign correctness** | Negative ROI despite confirmed spend — collinearity or data error |
+| **Contribution plausibility** | Media <5% or >80% of KPI — model failure or misattribution |
+| **Consensus honesty** | Analyst cited only agreeing models and ignored disagreements |
+| **Collinearity** | Channels that moved together in the same periods, confusing the model |
+| **Sample size caveat** | Data limitation not communicated clearly enough for a non-technical reader |
+
+If the Critic issues a `REVISE`, the Analyst fixes the specific issues and the Critic re-reviews once. After one revision cycle the Critic must approve — no infinite loops. This mirrors how a good data science team works: one round of review, then a decision.
 
 ### Reporter
-- Rewrites the approved analysis in plain English — no statistical jargon
-- Audience: marketing director or CMO
-- Runs `report_builder.py` to generate `report.pptx` (6-slide deck)
+**Role:** Translates the approved analysis into stakeholder language.
+
+The Reporter only runs after the Critic has issued `APPROVED`. It rewrites the Analyst's findings in plain English — no statistical jargon, no model names in the headline, no confidence intervals without explanation. The audience is a marketing director or CMO who needs to know where to put budget, not how MCMC works.
+
+It then runs `report_builder.py` to produce:
+- `results/report.md` — full written report
+- `results/report.pptx` — 15-slide PowerPoint deck with model overviews, comparison tables, ROI charts, and recommended actions
 
 ---
 
