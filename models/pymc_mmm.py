@@ -31,35 +31,70 @@ def run(
         }
 
     channels = cfg["media_channels"]
-    controls = [c for c in cfg["control_variables"] if c in train_df.columns]
+    controls = [c for c in cfg.get("control_variables", []) if c in train_df.columns]
     kpi_col  = "kpi"
 
-    channel_cols = [f"{ch}_saturated" for ch in channels if f"{ch}_saturated" in train_df.columns]
-    valid_channels = [ch for ch in channels if f"{ch}_saturated" in train_df.columns]
+    # PyMC-Marketing needs raw spend, not pre-transformed columns.
+    # Rebuild a raw-spend DataFrame aligned with train/test dates.
+    try:
+        import pandas as _pd
+        from pathlib import Path as _Path
+        raw = _pd.read_csv(_Path(cfg["data_path"]).expanduser())
+        date_col_raw = cfg.get("date_column", "date")
+        raw[date_col_raw] = _pd.to_datetime(raw[date_col_raw])
+        raw = raw.rename(columns={date_col_raw: "date", cfg["kpi_column"]: kpi_col})
+        raw = raw[["date", kpi_col] + channels].copy()
+        for ch in channels:
+            # Small epsilon prevents 0^negative_alpha in Hill saturation during NUTS
+            raw[ch] = raw[ch].fillna(0).clip(lower=1e-6)
+    except Exception as e:
+        return _fallback_pymc(train_df, test_df, cfg, f"raw load failed: {e}")
+
+    valid_channels = [ch for ch in channels if ch in raw.columns]
+    channel_cols = valid_channels
+
+    # Align train/test dates
+    train_dates = train_df["date"].values
+    test_dates  = test_df["date"].values
+    raw_train = raw[raw["date"].isin(train_dates)].sort_values("date").reset_index(drop=True)
+    raw_test  = raw[raw["date"].isin(test_dates)].sort_values("date").reset_index(drop=True)
 
     try:
-        import pytensor
+        import signal, pytensor
         pytensor.config.cxx = ""  # suppress g++ warning
 
-        mmm = MMM(
+        # Time-box the full MMM — pure-Python PyTensor is very slow without g++
+        _MMM_TIMEOUT_SEC = 180
+
+        def _timeout_handler(signum, frame):
+            raise TimeoutError("PyMC MMM sampling timed out")
+
+        mmm_kwargs = dict(
             date_column="date",
             channel_columns=channel_cols,
-            control_columns=controls,
             adstock=GeometricAdstock(l_max=cfg.get("adstock_max_lag", 1)),
             saturation=HillSaturation(),
         )
+        if controls:
+            mmm_kwargs["control_columns"] = controls
+        mmm = MMM(**mmm_kwargs)
 
-        X_train = train_df.drop(columns=[kpi_col])
-        y_train = train_df[kpi_col]
-        X_test  = test_df.drop(columns=[kpi_col])
+        X_train = raw_train.drop(columns=[kpi_col])
+        y_train = raw_train[kpi_col].astype(float)
+        X_test  = raw_test.drop(columns=[kpi_col])
 
-        mmm.fit(
-            X=X_train, y=y_train,
-            progressbar=False,
-            draws=cfg.get("pymc_samples", 300),
-            tune=cfg.get("pymc_tune", 200),
-            chains=1,
-        )
+        signal.signal(signal.SIGALRM, _timeout_handler)
+        signal.alarm(_MMM_TIMEOUT_SEC)
+        try:
+            mmm.fit(
+                X=X_train, y=y_train,
+                progressbar=False,
+                draws=cfg.get("pymc_samples", 200),
+                tune=cfg.get("pymc_tune", 100),
+                chains=1,
+            )
+        finally:
+            signal.alarm(0)  # cancel alarm
 
         import numpy as _np
         ppc_train = mmm.sample_posterior_predictive(X_train, combined=True, original_scale=True)
@@ -69,19 +104,21 @@ def run(
 
         total_kpi = float(y_train.sum())
         contributions = mmm.compute_channel_contribution_original_scale()
-        # channel coord is the saturated column name e.g. "TV_saturated"
         channel_contribs = {}
-        for ch, col in zip(valid_channels, channel_cols):
-            channel_contribs[ch] = float(contributions.sel(channel=col).values.sum())
+        for ch in valid_channels:
+            try:
+                channel_contribs[ch] = float(contributions.sel(channel=ch).values.sum())
+            except Exception:
+                channel_contribs[ch] = 0.0
 
         roi = {}
         for ch in valid_channels:
-            spend = train_df[f"{ch}_adstock"].sum() if f"{ch}_adstock" in train_df.columns else 1
+            spend = float(raw_train[ch].sum()) if ch in raw_train.columns else 1.0
             roi[ch] = float(channel_contribs[ch] / spend) if spend > 0 else 0.0
 
         train_r2   = 1 - np.var(y_train.values - y_pred_train) / np.var(y_train.values)
         train_mape = _mape(y_train.values, y_pred_train)
-        test_mape  = _mape(test_df[kpi_col].values, y_pred_test)
+        test_mape  = _mape(raw_test[kpi_col].values.astype(float), y_pred_test)
 
     except Exception as e:
         return _fallback_pymc(train_df, test_df, cfg, str(e))
@@ -98,9 +135,9 @@ def run(
         },
         "roi": {k: round(v, 4) for k, v in roi.items()},
         "y_pred_train": y_pred_train.tolist(),
-        "y_actual_train": train_df[kpi_col].tolist(),
+        "y_actual_train": raw_train[kpi_col].tolist(),
         "y_pred_test": y_pred_test.tolist(),
-        "y_actual_test": test_df[kpi_col].tolist(),
+        "y_actual_test": raw_test[kpi_col].tolist(),
     }
 
 

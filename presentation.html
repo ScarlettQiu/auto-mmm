@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto-MMM — Round 3 Results</title>
+  <title>Auto-MMM — Round 2 Results</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -413,14 +413,14 @@
      S1 — TITLE
      ═══════════════════════════════════════════════════════════ -->
 <section class="slide" id="s1">
-  <div class="badge r kicker">Round 3 · Critic Approved ✓</div>
+  <div class="badge r kicker">Round 2 · Critic Approved ✓</div>
   <h1 class="r" style="margin-top:.8rem;">Auto-<span>MMM</span></h1>
-  <p class="r" style="margin-top:.9rem;">Autonomous Marketing Mix Modelling — three independent models,<br>four specialist agents, zero manual tuning.</p>
+  <p class="r" style="margin-top:.9rem;">Autonomous Marketing Mix Modelling — three independent models,<br>five specialist agents, zero manual tuning.</p>
   <div class="hero-stats r">
-    <div class="hero-stat"><div class="v green">3.56%</div><div class="l">Best Test MAPE</div></div>
-    <div class="hero-stat"><div class="v red">0.90</div><div class="l">Affiliates ROI</div></div>
-    <div class="hero-stat"><div class="v">3</div><div class="l">Rounds Run</div></div>
-    <div class="hero-stat"><div class="v">54%</div><div class="l">MAPE Reduction</div></div>
+    <div class="hero-stat"><div class="v green">20.4%</div><div class="l">Best Test MAPE</div></div>
+    <div class="hero-stat"><div class="v red">4.0</div><div class="l">Meta Instagram ROI</div></div>
+    <div class="hero-stat"><div class="v">2</div><div class="l">Rounds Run</div></div>
+    <div class="hero-stat"><div class="v">13%</div><div class="l">MAPE Reduction</div></div>
   </div>
 </section>
 
@@ -430,26 +430,26 @@
 <section class="slide" id="s2">
   <div class="s2-left">
     <div class="eyebrow r">01 — The Dataset</div>
-    <h2 class="r">DT Mart<br>Media Data</h2>
-    <p class="r" style="margin-top:.6rem;">Monthly spend and GMV across 8 channels from a growing e-commerce retailer. KPI: total GMV in INR.</p>
-    <p class="r" style="margin-top:1rem; font-size:.8rem; color:var(--text-3);">Source: Kaggle · datatattle/dt-mart-market-mix-modeling</p>
+    <h2 class="r">Conjura<br>eCommerce MMM</h2>
+    <p class="r" style="margin-top:.6rem;">Weekly spend and revenue across 8 Google + Meta channels for an Apparel brand. KPI: first-purchase revenue in USD.</p>
+    <p class="r" style="margin-top:1rem; font-size:.8rem; color:var(--text-3);">Source: Figshare · Multi-Region MMM Dataset · 93 brands</p>
   </div>
   <div class="s2-right">
     <div class="big-stat r">
-      <div class="n" style="color:var(--text);">12</div>
-      <div class="d">Monthly observations<br>10 train · 2 holdout</div>
+      <div class="n" style="color:var(--text);">132</div>
+      <div class="d">Weekly observations<br>128 train · 4 holdout</div>
     </div>
     <div class="big-stat r">
       <div class="n o">8</div>
-      <div class="d">Media channels<br>TV, Digital, SEM, Affiliates + 4</div>
+      <div class="d">Media channels<br>Google Search, Shopping, PMax, Display, Video · Meta FB, IG, Other</div>
     </div>
     <div class="big-stat r">
-      <div class="n g">338M</div>
-      <div class="d">Average monthly GMV<br>INR — healthy baseline</div>
+      <div class="n g">$30M</div>
+      <div class="d">Average weekly revenue<br>USD — peak $114M (holiday)</div>
     </div>
     <div class="big-stat warn r">
-      <div class="n">419K</div>
-      <div class="d">August 2015 anomaly<br>vs 338M avg — data error suspected</div>
+      <div class="n">5</div>
+      <div class="d">Revenue anomalies flagged<br>Seasonal spikes · z &gt; 3σ · May &amp; Dec peaks</div>
     </div>
   </div>
 </section>
@@ -471,59 +471,59 @@
     </div>
     <div class="mr-pros">
       <div class="mr-label">Strengths</div>
-      <div class="pro">Fast, interpretable coefficients</div>
-      <div class="pro">Bootstrap uncertainty bounds</div>
+      <div class="pro">Fast, runs in seconds</div>
+      <div class="pro">Best out-of-sample MAPE this run</div>
     </div>
     <div class="mr-cons">
       <div class="mr-label">Limitations</div>
-      <div class="con">Shrinks correlated channels to zero</div>
-      <div class="con">No positivity constraint</div>
+      <div class="con">Alpha=109.85 zeroed all channel coefficients</div>
+      <div class="con">Baseline-only model — no channel signal</div>
     </div>
     <div class="mr-mape">
-      <div class="mape-n" style="color:#5BA3D9;">3.56%</div>
-      <div class="mape-l">Test MAPE</div>
+      <div class="mape-n" style="color:#5BA3D9;">20.4%</div>
+      <div class="mape-l">Test MAPE · R²=0.41</div>
     </div>
   </div>
 
   <div class="model-row r" style="border-top-color:#5CC45C;">
     <div class="mr-name">
       <h3>NNLS</h3>
-      <div class="tag">non-negative least squares</div>
+      <div class="tag">non-negative least squares · fallback</div>
     </div>
     <div class="mr-pros">
       <div class="mr-label">Strengths</div>
-      <div class="pro">Enforces positive ROI — realistic</div>
-      <div class="pro">Captures gross correlation signal</div>
+      <div class="pro">Only model producing channel-level ROI</div>
+      <div class="pro">Enforces positive attribution</div>
     </div>
     <div class="mr-cons">
       <div class="mr-label">Limitations</div>
-      <div class="con">No uncertainty quantification</div>
-      <div class="con">Higher holdout error</div>
+      <div class="con">No uncertainty bounds</div>
+      <div class="con">Sensitive to outlier spend weeks</div>
     </div>
     <div class="mr-mape">
-      <div class="mape-n" style="color:#5CC45C;">7.56%</div>
-      <div class="mape-l">Test MAPE</div>
+      <div class="mape-n" style="color:#5CC45C;">21.5%</div>
+      <div class="mape-l">Test MAPE · R²=0.54</div>
     </div>
   </div>
 
   <div class="model-row r" style="border-top-color:#E07070;">
     <div class="mr-name">
       <h3>PyMC</h3>
-      <div class="tag">bayesian · MCMC posterior</div>
+      <div class="tag">bayesian · fallback BLM</div>
     </div>
     <div class="mr-pros">
       <div class="mr-label">Strengths</div>
-      <div class="pro">Full posterior distributions</div>
-      <div class="pro">Principled on small samples</div>
+      <div class="pro">Principled uncertainty quantification</div>
+      <div class="pro">HalfNormal priors constrain positivity</div>
     </div>
     <div class="mr-cons">
       <div class="mr-label">Limitations</div>
-      <div class="con">JAX install required (NNLS fallback)</div>
-      <div class="con">Computationally slow</div>
+      <div class="con">Full MMM timed out — no C compiler</div>
+      <div class="con">Fallback BLM gives zero channel ROI</div>
     </div>
     <div class="mr-mape">
-      <div class="mape-n" style="color:var(--text-3); font-size:1rem;">Fallback</div>
-      <div class="mape-l">JAX not installed</div>
+      <div class="mape-n" style="color:#E07070;">21.1%</div>
+      <div class="mape-l">Test MAPE · R²=0.52</div>
     </div>
   </div>
 </section>
@@ -534,50 +534,38 @@
 <section class="slide" id="s4">
   <div class="wrap">
     <div class="eyebrow r">03 — Autonomous Tuning</div>
-    <h2 class="r" style="margin-top:.5rem; margin-bottom:.5rem;">Three rounds, one change per round</h2>
-    <p class="r" style="max-width:58ch; margin-bottom:1.8rem;">The Tuner picks one parameter, models re-run, the Critic approves or requests revision before the next round starts.</p>
+    <h2 class="r" style="margin-top:.5rem; margin-bottom:.5rem;">Two rounds, one change per round</h2>
+    <p class="r" style="max-width:58ch; margin-bottom:1.8rem;">The Tuner reads fit metrics, picks one parameter to change, models re-run, the Critic approves or requests revision before the next round starts.</p>
 
     <div class="timeline r">
       <div class="tl-node">
         <div class="tl-circle">
           <div class="rnum">R1</div>
-          <div class="rmape">7.80%</div>
+          <div class="rmape">23.2%</div>
         </div>
         <div class="tl-body">
-          <div class="change">Baseline<br>lag=3 · slope=2.0</div>
-          <div class="verdict"><span class="badge" style="font-size:.6rem;">APPROVED</span></div>
-        </div>
-      </div>
-      <div class="tl-node">
-        <div class="tl-circle">
-          <div class="rnum">R2</div>
-          <div class="rmape">5.66%</div>
-        </div>
-        <div class="tl-body">
-          <div class="change">adstock lag<br>3 → 1 <span class="delta-g">▼27%</span></div>
+          <div class="change">Baseline<br>lag=2 · slope=1.5</div>
           <div class="verdict"><span class="badge" style="font-size:.6rem;">APPROVED</span></div>
         </div>
       </div>
       <div class="tl-node">
         <div class="tl-circle best">
-          <div class="rnum">R3</div>
-          <div class="rmape">3.56%</div>
+          <div class="rnum">R2</div>
+          <div class="rmape">20.4%</div>
         </div>
         <div class="tl-body">
-          <div class="change">hill slope<br>2.0 → 1.5 <span class="delta-g">▼37%</span></div>
+          <div class="change">adstock lag<br>2 → 1 <span class="delta-g">▼12%</span></div>
           <div class="verdict"><span class="badge green" style="font-size:.6rem;">APPROVED ✓</span></div>
         </div>
       </div>
     </div>
 
     <div class="mape-trail r">
-      <span class="trail-label">Ridge MAPE</span>
-      <span class="trail-node">7.80%</span>
+      <span class="trail-label">Best MAPE</span>
+      <span class="trail-node">23.2%</span>
       <span class="trail-arrow">→</span>
-      <span class="trail-node">5.66%</span>
-      <span class="trail-arrow">→</span>
-      <span class="trail-node best">3.56% ✓</span>
-      <span class="trail-note">— 54% total reduction over 3 rounds</span>
+      <span class="trail-node best">20.4% ✓</span>
+      <span class="trail-note">— 12% reduction · Ridge R² 0.34 → 0.41 · NNLS R² 0.49 → 0.54</span>
     </div>
   </div>
 </section>
@@ -588,11 +576,11 @@
 <section class="slide" id="s5">
   <div class="s5-left">
     <div class="eyebrow r" style="color:rgba(255,255,255,.4);">04 — Channel ROI</div>
-    <h2 class="r">One channel stands apart.</h2>
-    <p class="r">NNLS return per INR 1 spent. Six channels show zero — reflecting insufficient data, not confirmed zero effectiveness.</p>
+    <h2 class="r">Meta dominates.<br>Google surprises.</h2>
+    <p class="r">NNLS return per $1 spent. Only NNLS produced channel-level signal this round — Ridge and PyMC fallback both zeroed all channels.</p>
     <div class="s5-highlight r">
-      <div class="hv">0.90</div>
-      <div class="hl">Affiliates ROI · Round 3</div>
+      <div class="hv">4.0×</div>
+      <div class="hl">Meta Instagram ROI · Round 2</div>
     </div>
   </div>
   <div class="s5-right">
@@ -605,22 +593,22 @@
      ═══════════════════════════════════════════════════════════ -->
 <section class="slide" id="s6">
   <div class="q-overline r"></div>
-  <div class="q-text r"><em>Three</em> rounds.<br><em>Two</em> methods.<br>Same answer.</div>
-  <div class="q-sub r">Round 1: ROI 0.75 · Round 2: ROI 0.75 · Round 3: ROI 0.90</div>
+  <div class="q-text r"><em>Meta</em> drives<br><em>95%</em> of<br>attributed revenue.</div>
+  <div class="q-sub r">Meta Facebook 67.6% · Meta Instagram 27.8% · NNLS only · Round 2</div>
   <div class="triple r">
     <div class="triple-item" style="text-align:center;">
-      <div class="n">0.90</div>
-      <div class="d">NNLS ROI (R3)</div>
+      <div class="n">3.0×</div>
+      <div class="d">Meta Facebook ROI</div>
     </div>
     <div class="triple-divider"></div>
     <div class="triple-item" style="text-align:center;">
-      <div class="n">16.4%</div>
-      <div class="d">of GMV attributed</div>
+      <div class="n">95%</div>
+      <div class="d">attributed revenue from Meta</div>
     </div>
     <div class="triple-divider"></div>
     <div class="triple-item" style="text-align:center;">
-      <div class="n">3/3</div>
-      <div class="d">rounds positive</div>
+      <div class="n">6.2×</div>
+      <div class="d">Google Search ROI (unconfirmed)</div>
     </div>
   </div>
 </section>
@@ -637,31 +625,34 @@
     <div style="width:100%; max-width:1080px; display:grid; grid-template-columns:1fr 1.4fr; gap:3.5rem; align-items:start;">
       <div class="r">
         <!-- SVG Donut — NNLS -->
-        <div class="col-eyebrow">NNLS Contribution</div>
+        <div class="col-eyebrow">NNLS Contribution (Round 2)</div>
         <svg class="donut-svg" viewBox="0 0 180 180" width="180" height="180" style="display:block; margin:0 auto 1.2rem;">
-          <!-- baseline 75.44% -->
+          <!-- baseline ~4% implied remainder -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#2a2a32" stroke-width="28"
             stroke-dasharray="376.99" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
-          <!-- Affiliates 16.37% -->
+          <!-- Meta Facebook 67.57% -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#A91E2C" stroke-width="28"
-            stroke-dasharray="61.74 315.25" stroke-dashoffset="0" transform="rotate(-90 90 90)"
-            style="transition:stroke-dasharray 1s ease"/>
-          <!-- Sponsorship 8.19% -->
+            stroke-dasharray="254.86 122.13" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
+          <!-- Meta Instagram 27.75% -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#D63031" stroke-width="28"
-            stroke-dasharray="30.91 346.08" stroke-dashoffset="-61.74" transform="rotate(-90 90 90)"/>
-          <text x="90" y="86" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#f2f0ee">24.6%</text>
+            stroke-dasharray="104.72 272.27" stroke-dashoffset="-254.86" transform="rotate(-90 90 90)"/>
+          <!-- Google Search 3.91% -->
+          <circle cx="90" cy="90" r="60" fill="none" stroke="#E07070" stroke-width="28"
+            stroke-dasharray="14.76 362.23" stroke-dashoffset="-359.58" transform="rotate(-90 90 90)"/>
+          <text x="90" y="86" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#f2f0ee">99.2%</text>
           <text x="90" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(242,240,238,.4)">MEDIA SHARE</text>
         </svg>
         <div class="donut-legend">
-          <div class="leg-row"><div class="leg-dot" style="background:#A91E2C;"></div>Affiliates — 16.4%</div>
-          <div class="leg-row"><div class="leg-dot" style="background:#D63031;"></div>Sponsorship — 8.2%</div>
-          <div class="leg-row"><div class="leg-dot" style="background:#2a2a32;"></div>Baseline — 75.4%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#A91E2C;"></div>Meta Facebook — 67.6%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#D63031;"></div>Meta Instagram — 27.8%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#E07070;"></div>Google Search — 3.9%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#2a2a32;"></div>Other / Baseline</div>
         </div>
       </div>
 
       <div class="contrib-right r">
         <h3 style="margin-bottom:.4rem;">Why do the models differ?</h3>
-        <p style="margin-bottom:1.4rem; font-size:.85rem;">Ridge attributes 100% to baseline because L2 regularisation shrinks all channel coefficients toward zero when predictors are correlated on only 10 training observations. NNLS, without the L2 penalty, allocates 24.6% to media — within a plausible MMM range for a growing retailer.</p>
+        <p style="margin-bottom:1.4rem; font-size:.85rem;">Ridge's L2 regularisation (alpha=109.85) zeroed all 8 channel coefficients — it is effectively a baseline-only model and cannot validate any channel ROI. PyMC's fallback Bayesian LM similarly produces zero channel attribution. Only NNLS allocates media spend, attributing 99%+ to Meta — plausible given Meta's dominance of the spend mix ($950M of $970M total).</p>
 
         <div class="col-eyebrow" style="margin-bottom:.8rem;">Ridge Contribution</div>
         <div id="ridge-contrib-s7"></div>
@@ -680,23 +671,23 @@
   <div class="limit-col">
     <div class="limit-num r">01</div>
     <div class="limit-icon r">⚠️</div>
-    <div class="limit-title r">August 2015 Anomaly</div>
-    <div class="limit-body r">GMV = INR 419,196 in a dataset where every other month exceeds INR 176M. Almost certainly a data entry error — missing zeros or wrong month. It inflates train MAPE to 310–877% and distorts all model diagnostics.</div>
-    <div class="limit-tag r">Fix this first</div>
+    <div class="limit-title r">Outlier Spend Week</div>
+    <div class="limit-body r">2022-05-30: google_shopping spend spiked z=10.2σ, revenue spiked z=4.1σ in the same week. NNLS attributes the full revenue uplift to google_shopping, inflating its ROI to 22.3. This is almost certainly a data artifact — not a real response curve. Add an event indicator before trusting that estimate.</div>
+    <div class="limit-tag r">Needs event flag</div>
   </div>
   <div class="limit-col">
     <div class="limit-num r">02</div>
-    <div class="limit-icon r">📏</div>
-    <div class="limit-title r">10 Observations, 8 Channels</div>
-    <div class="limit-body r">10 training rows cannot support 8 channel predictors simultaneously. Zero ROI on 6 channels means unmeasurable — not ineffective. Weekly data for 12+ months (52+ obs) is the minimum needed.</div>
-    <div class="limit-tag r">Structural constraint</div>
+    <div class="limit-icon r">🧮</div>
+    <div class="limit-title r">Only One Model Has Signal</div>
+    <div class="limit-body r">Ridge (alpha=109.85) and PyMC fallback both zero all channel coefficients. Only NNLS produces channel attribution — making cross-model agreement structurally impossible. Install gcc for PyMC's full MMM and fix Ridge's regularisation before trusting any ROI ranking.</div>
+    <div class="limit-tag r">3 models needed</div>
   </div>
   <div class="limit-col">
     <div class="limit-num r">03</div>
-    <div class="limit-icon r">🔗</div>
-    <div class="limit-title r">Collinearity</div>
-    <div class="limit-body r">Affiliates, Sponsorship, and Online.marketing all peak in the same months (Sep/Nov 2015, Mar 2016). Monthly data cannot separate their contributions. Weekly or daily data with more natural spend variation is needed.</div>
-    <div class="limit-tag r">Requires more data</div>
+    <div class="limit-icon r">📉</div>
+    <div class="limit-title r">4-Period Holdout</div>
+    <div class="limit-body r">Test MAPE is calculated on just 4 weeks. A single outlier week (holiday season, promo) can swing MAPE by 5–10 percentage points. Expand holdout to 8–13 weeks (one full quarter) for reliable out-of-sample evaluation.</div>
+    <div class="limit-tag r">Expand holdout</div>
   </div>
 </section>
 
@@ -711,27 +702,27 @@
     <div class="rec-row r">
       <div class="rec-n">01</div>
       <div>
-        <div class="rec-title">Protect Affiliates budget</div>
-        <div class="rec-body">Three rounds, two model types, consistent ROI of 0.75–0.90. This is the strongest signal the current dataset can produce. Do not reduce Affiliates spend pending a better-powered analysis.</div>
+        <div class="rec-title">Do not act on google_shopping ROI 22.3</div>
+        <div class="rec-body">The estimate is almost certainly an artifact of the 2022-05-30 synchronized outlier spike — not a real efficiency signal. Re-run Round 3 with a binary event indicator for that week before making any budget decision on Google Shopping.</div>
       </div>
     </div>
     <div class="rec-row r">
       <div class="rec-n">02</div>
       <div>
-        <div class="rec-title">Fix the August 2015 data point</div>
-        <div class="rec-body">INR 419,196 is almost certainly a data entry error. Correcting it may unlock measurable signal for the 6 zero-ROI channels. Check source systems against the raw transaction log — this is a one-day investigation.</div>
+        <div class="rec-title">Meta Instagram shows the most credible positive ROI</div>
+        <div class="rec-body">Instagram ROI 4.0 vs Facebook 3.0 — Instagram delivers more per dollar despite lower absolute spend. If budget reallocation is being considered within the Meta portfolio, directionally favour Instagram. Treat as hypothesis, not confirmed finding, until Ridge or PyMC corroborate.</div>
       </div>
     </div>
     <div class="rec-row r">
       <div class="rec-n">03</div>
       <div>
-        <div class="rec-title">Collect weekly data for 18+ months before re-running</div>
-        <div class="rec-body">Monthly gives 10 training rows — statistically underpowered. Weekly gives 78+ observations over 18 months, enough to support all 8 channels simultaneously with proper uncertainty bounds.</div>
+        <div class="rec-title">Fix the model stack before Round 3</div>
+        <div class="rec-body">Install gcc so PyMC's full Bayesian MMM can run (expected ~5 min vs 30+ min pure Python). Retune Ridge with a narrower alpha range or switch to OLS. Without two working models, cross-model agreement — the core signal this system is designed to produce — is structurally impossible.</div>
       </div>
     </div>
 
     <div class="bottom-line r">
-      <strong>Bottom line:</strong> Affiliates shows consistent positive ROI across three independent rounds and two model types. For all other channels, do not make budget decisions based on this analysis.
+      <strong>Bottom line:</strong> Meta (Facebook + Instagram) dominates attributed revenue at 95%+ share. The model stack needs repair before any channel ROI ranking is credible enough for budget reallocation.
     </div>
   </div>
 </section>
@@ -739,25 +730,25 @@
 <script>
 // ── Data ──────────────────────────────────────────────────────────────
 const ROI = [
-  { lbl:'Affiliates',        roi:0.898, color:'#A91E2C', top:true  },
-  { lbl:'Sponsorship',       roi:0.061, color:'#D63031', top:false },
-  { lbl:'TV',                roi:0.000, color:'#2a2a32', top:false },
-  { lbl:'Digital',           roi:0.000, color:'#2a2a32', top:false },
-  { lbl:'SEM',               roi:0.000, color:'#2a2a32', top:false },
-  { lbl:'Online.marketing',  roi:0.000, color:'#2a2a32', top:false },
-  { lbl:'Content.Marketing', roi:0.000, color:'#2a2a32', top:false },
-  { lbl:'Radio',             roi:0.000, color:'#2a2a32', top:false },
+  { lbl:'Google Shopping ⚠️',  roi:22.339, color:'#E07070', top:false },
+  { lbl:'Google Search',       roi:6.158,  color:'#D63031', top:false },
+  { lbl:'Meta Instagram',      roi:3.977,  color:'#A91E2C', top:true  },
+  { lbl:'Meta Facebook',       roi:2.985,  color:'#C23030', top:false },
+  { lbl:'Google Display',      roi:0.000,  color:'#2a2a32', top:false },
+  { lbl:'Google PMax',         roi:0.000,  color:'#2a2a32', top:false },
+  { lbl:'Google Video',        roi:0.000,  color:'#2a2a32', top:false },
+  { lbl:'Meta Other',          roi:0.000,  color:'#2a2a32', top:false },
 ];
 
 const RIDGE = [
   { lbl:'Baseline',  pct:100.0, color:'#3a3a44' },
-  { lbl:'All Media', pct:0.0,   color:'#A91E2C'  },
+  { lbl:'All Media (zeroed)', pct:0.0, color:'#A91E2C' },
 ];
 const NNLS = [
-  { lbl:'Affiliates',  pct:16.37, color:'#A91E2C' },
-  { lbl:'Sponsorship', pct:8.19,  color:'#D63031'  },
-  { lbl:'Baseline',    pct:75.44, color:'#3a3a44'  },
-  { lbl:'Other',       pct:0.00,  color:'#2a2a32'  },
+  { lbl:'Meta Facebook',   pct:67.57, color:'#A91E2C' },
+  { lbl:'Meta Instagram',  pct:27.75, color:'#D63031'  },
+  { lbl:'Google Search',   pct:3.91,  color:'#E07070'  },
+  { lbl:'Google Shopping', pct:2.74,  color:'#c06060'  },
 ];
 
 // ── Render bar charts ──────────────────────────────────────────────────

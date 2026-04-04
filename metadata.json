@@ -1,290 +1,160 @@
 {
-  "_generated": "2026-04-03T22:45:44.219665",
+  "_generated": "2026-04-03T23:03:45.264194",
   "_source": {
     "source": "csv",
-    "data_path": "/Users/qiuyu/.cache/kagglehub/datasets/datatattle/dt-mart-market-mix-modeling/versions/1/Secondfile.csv"
+    "data_path": "./data.csv"
   },
   "dataset": {
-    "n_rows": 12,
-    "n_periods": 12,
+    "n_rows": 132,
+    "n_periods": 132,
     "date_range": [
-      "2015-07-01",
-      "2016-06-01"
+      "2021-11-22",
+      "2024-05-27"
     ],
-    "date_frequency": "monthly",
-    "entities": {
-      "Content.Marketing": {
-        "unique_values": 8,
-        "sample": [
-          9000000.0,
-          6000000.0,
-          4000000.0,
-          0.0,
-          8000000.0
-        ]
-      },
-      "Online.marketing": {
-        "unique_values": 12,
-        "sample": [
-          229000000.0,
-          199000000.0,
-          184000000.0,
-          165000000.0,
-          237000000.0
-        ]
-      },
-      "Date": {
-        "unique_values": 12,
-        "sample": [
-          "2016-01-01",
-          "2016-02-01",
-          "2016-03-01",
-          "2016-04-01",
-          "2016-05-01"
-        ]
-      }
-    }
+    "date_frequency": "weekly",
+    "entities": {}
   },
   "columns": {
-    "date": "month",
-    "kpi": "Revenue_Camera",
+    "date": "date",
+    "kpi": "first_orders",
     "channels": [
-      "Total.Investment",
-      "TV",
-      "Digital",
-      "Affiliates",
-      "SEM",
-      "Radio"
+      "google_search",
+      "google_shopping",
+      "google_pmax",
+      "google_display",
+      "google_video",
+      "meta_facebook",
+      "meta_instagram",
+      "meta_other"
     ],
-    "controls": [
-      "Discount_Camera",
-      "Discount_CameraAccessory",
-      "Discount_EntertainmentSmall",
-      "Discount_GameCDDVD",
-      "Discount_GamingHardware",
-      "total_Discount",
-      "NPS"
-    ],
+    "controls": [],
     "all": [
-      "Unnamed: 0",
-      "month",
-      "Revenue_Camera",
-      "Revenue_CameraAccessory",
-      "Revenue_EntertainmentSmall",
-      "Revenue_GameCDDVD",
-      "Revenue_GamingHardware",
-      "total_gmv",
-      "Units_Camera",
-      "Units_CameraAccessory",
-      "Units_EntertainmentSmall",
-      "Units_GameCDDVD",
-      "Units_GamingHardware",
-      "total_Units",
-      "Mrp_Camera",
-      "Mrp_CameraAccessory",
-      "Mrp_EntertainmentSmall",
-      "Mrp_GameCDDVD",
-      "Mrp_GamingHardware",
-      "total_Mrp",
-      "Discount_Camera",
-      "Discount_CameraAccessory",
-      "Discount_EntertainmentSmall",
-      "Discount_GameCDDVD",
-      "Discount_GamingHardware",
-      "total_Discount",
-      "Year",
-      "Month",
-      "Total.Investment",
-      "TV",
-      "Digital",
-      "Sponsorship",
-      "Content.Marketing",
-      "Online.marketing",
-      "Affiliates",
-      "SEM",
-      "Radio",
-      "Other",
-      "Date",
-      "NPS"
+      "date",
+      "google_search",
+      "google_shopping",
+      "google_pmax",
+      "google_display",
+      "google_video",
+      "meta_facebook",
+      "meta_instagram",
+      "meta_other",
+      "first_orders",
+      "revenue",
+      "all_orders",
+      "all_revenue"
     ]
   },
   "kpi_stats": {
-    "mean": 148723008.29,
-    "median": 159295843.7,
-    "std": 67289516.19,
-    "min": 61550.0,
-    "max": 242732530.5,
+    "mean": 683.12,
+    "median": 556.0,
+    "std": 445.73,
+    "min": 257.0,
+    "max": 2535.0,
     "zeros": 0,
     "nulls": 0
   },
   "channel_stats": {
-    "Total.Investment": {
-      "mean": 705500000.0,
-      "max": 1702000000.0,
+    "google_search": {
+      "mean": 136690.88,
+      "max": 595247.59,
       "zero_pct": 0.0,
       "null_pct": 0.0,
-      "corr_to_kpi": 0.851
+      "corr_to_kpi": 0.607
     },
-    "TV": {
-      "mean": 37000000.0,
-      "max": 93000000.0,
-      "zero_pct": 8.3,
+    "google_shopping": {
+      "mean": 25147.39,
+      "max": 1233383.32,
+      "zero_pct": 76.5,
       "null_pct": 0.0,
-      "corr_to_kpi": 0.716
+      "corr_to_kpi": 0.352
     },
-    "Digital": {
-      "mean": 24833333.33,
-      "max": 126000000.0,
+    "google_pmax": {
+      "mean": 562112.65,
+      "max": 1753163.23,
+      "zero_pct": 2.3,
+      "null_pct": 0.0,
+      "corr_to_kpi": 0.303
+    },
+    "google_display": {
+      "mean": 50029.37,
+      "max": 123577.18,
+      "zero_pct": 0.8,
+      "null_pct": 0.0,
+      "corr_to_kpi": -0.04
+    },
+    "google_video": {
+      "mean": 122891.55,
+      "max": 324413.7,
+      "zero_pct": 2.3,
+      "null_pct": 0.0,
+      "corr_to_kpi": -0.15
+    },
+    "meta_facebook": {
+      "mean": 4727632.3,
+      "max": 23143378.98,
       "zero_pct": 0.0,
       "null_pct": 0.0,
-      "corr_to_kpi": 0.424
+      "corr_to_kpi": 0.599
     },
-    "Affiliates": {
-      "mean": 51166666.67,
-      "max": 74000000.0,
+    "meta_instagram": {
+      "mean": 1712200.92,
+      "max": 11000380.0,
       "zero_pct": 0.0,
       "null_pct": 0.0,
-      "corr_to_kpi": 0.93
+      "corr_to_kpi": 0.315
     },
-    "SEM": {
-      "mean": 75916666.67,
-      "max": 319000000.0,
-      "zero_pct": 0.0,
+    "meta_other": {
+      "mean": 3672.75,
+      "max": 26714.0,
+      "zero_pct": 7.6,
       "null_pct": 0.0,
-      "corr_to_kpi": 0.564
-    },
-    "Radio": {
-      "mean": 15666666.67,
-      "max": 27000000.0,
-      "zero_pct": 0.0,
-      "null_pct": 75.0,
-      "corr_to_kpi": 0.673
+      "corr_to_kpi": 0.182
     }
   },
-  "anomalies": [],
+  "anomalies": [
+    {
+      "date": "2022-05-30",
+      "kpi_value": 2492.0,
+      "z_score": 4.06,
+      "note": "KPI = 2,492 vs mean 683 (z=4.1\u03c3) \u2014 investigate"
+    },
+    {
+      "date": "2022-10-03",
+      "kpi_value": 2159.0,
+      "z_score": 3.31,
+      "note": "KPI = 2,159 vs mean 683 (z=3.3\u03c3) \u2014 investigate"
+    },
+    {
+      "date": "2022-12-12",
+      "kpi_value": 2211.0,
+      "z_score": 3.43,
+      "note": "KPI = 2,211 vs mean 683 (z=3.4\u03c3) \u2014 investigate"
+    },
+    {
+      "date": "2023-10-02",
+      "kpi_value": 2042.0,
+      "z_score": 3.05,
+      "note": "KPI = 2,042 vs mean 683 (z=3.0\u03c3) \u2014 investigate"
+    },
+    {
+      "date": "2023-12-11",
+      "kpi_value": 2535.0,
+      "z_score": 4.15,
+      "note": "KPI = 2,535 vs mean 683 (z=4.2\u03c3) \u2014 investigate"
+    }
+  ],
   "warnings": [
-    "Only 12 time periods \u2014 MMM needs 50+ for reliable estimates"
+    "5 KPI anomaly(ies) detected \u2014 review before modelling",
+    "google_shopping: 76.5% zeros \u2014 sparse channel, may not be identifiable"
   ],
   "channel_notes": {
-    "Total.Investment": "",
-    "TV": "Television advertising spend",
-    "Digital": "Digital display advertising",
-    "Affiliates": "Affiliate partner commissions and fees",
-    "SEM": "Google/Bing paid search spend",
-    "Radio": "Radio advertising spend"
-  },
-  "expected_roi": {
-    "month": {
-      "min": null,
-      "max": null,
-      "label": "Month",
-      "unit": ""
-    },
-    "Affiliates": {
-      "min": 0.5,
-      "max": 2,
-      "label": "Affiliates",
-      "unit": "INR"
-    },
-    "total_gmv": {
-      "min": null,
-      "max": null,
-      "label": "Total GMV",
-      "unit": "INR"
-    },
-    "Content.Marketing": {
-      "min": 0,
-      "max": 2,
-      "label": "Content Marketing",
-      "unit": "INR"
-    },
-    "NPS": {
-      "min": null,
-      "max": null,
-      "label": "Net Promoter Score",
-      "unit": "score"
-    },
-    "total_Discount": {
-      "min": null,
-      "max": null,
-      "label": "Total Discount",
-      "unit": "INR"
-    },
-    "Sponsorship": {
-      "min": 0,
-      "max": 1.5,
-      "label": "Sponsorship",
-      "unit": "INR"
-    },
-    "Digital": {
-      "min": 0.2,
-      "max": 3,
-      "label": "Digital Spend",
-      "unit": "INR"
-    },
-    "TV": {
-      "min": 0,
-      "max": 2,
-      "label": "TV Spend",
-      "unit": "INR"
-    },
-    "Online.marketing": {
-      "min": 0,
-      "max": 2.5,
-      "label": "Online Marketing",
-      "unit": "INR"
-    },
-    "Radio": {
-      "min": 0,
-      "max": 1,
-      "label": "Radio Spend",
-      "unit": "INR"
-    },
-    "SEM": {
-      "min": 0.3,
-      "max": 4,
-      "label": "Paid Search (SEM)",
-      "unit": "INR"
-    }
-  },
-  "business_context": {
-    "market": "India",
-    "date_frequency": "monthly",
-    "seasonality_notes": "Sep/Nov peak (festive), Jan dip",
-    "kpi": "total_gmv",
-    "brand": "DT Mart",
-    "currency": "INR",
-    "typical_media_share": "15\u201330% of GMV"
-  },
-  "known_issues": [
-    {
-      "issue": "Collinearity: TV + Sponsorship",
-      "affects": "TV, Sponsorship",
-      "date_range": "all",
-      "severity": "medium",
-      "action": "Seasonal co-movement. Consider combined 'brand' channel if separation is impossible."
-    },
-    {
-      "issue": "12 monthly periods \u2014 underpowered",
-      "affects": "all channels",
-      "date_range": "all",
-      "severity": "high",
-      "action": "Collect weekly data for 18+ months before trusting channel-level ROI estimates."
-    },
-    {
-      "issue": "August 2015 GMV anomaly",
-      "affects": "total_gmv",
-      "date_range": "2015-08-01",
-      "severity": "high",
-      "action": "Investigate source data \u2014 value is 419K vs 338M average. Likely missing zeros or wrong month entry."
-    },
-    {
-      "issue": "Collinearity: Affiliates + Online.marketing",
-      "affects": "Affiliates, Online.marketing",
-      "date_range": "all",
-      "severity": "medium",
-      "action": "Both channels peak in same months. Weekly data needed to separate effects."
-    }
-  ],
-  "_notion_synced": "2026-04-03T22:45:45.192356"
+    "google_search": "",
+    "google_shopping": "",
+    "google_pmax": "",
+    "google_display": "",
+    "google_video": "",
+    "meta_facebook": "",
+    "meta_instagram": "",
+    "meta_other": ""
+  }
 }

@@ -188,6 +188,35 @@ WHEN_TO_USE = [
 ]
 
 
+# ── Exploration report loader ─────────────────────────────────────────────────
+
+def load_exploration_report() -> str:
+    """Return the content of rounds/R01_data_exploration.md, or '' if missing."""
+    path = Path("rounds/R01_data_exploration.md")
+    if path.exists():
+        return path.read_text()
+    return ""
+
+
+def _parse_exploration(text: str) -> dict:
+    """Extract readiness score and key section snippets from exploration report."""
+    out = {"score": "", "sections": {}, "raw": text}
+    for line in text.splitlines():
+        if line.startswith("**Readiness Score:**") or line.startswith("**Score:"):
+            out["score"] = line.strip()
+        if line.startswith("## "):
+            current = line[3:].strip()
+            out["sections"][current] = []
+        elif out["sections"]:
+            last = list(out["sections"])[-1]
+            out["sections"][last].append(line)
+    # Trim trailing blank lines per section
+    for k in out["sections"]:
+        while out["sections"][k] and not out["sections"][k][-1].strip():
+            out["sections"][k].pop()
+    return out
+
+
 # ── Markdown report ──────────────────────────────────────────────────────────
 
 def build_markdown(results: dict, summary_text: str = "") -> str:
@@ -207,6 +236,11 @@ def build_markdown(results: dict, summary_text: str = "") -> str:
 
     if summary_text:
         lines += ["## Executive Summary", "", summary_text, ""]
+
+    # Data exploration findings
+    exploration_text = load_exploration_report()
+    if exploration_text:
+        lines += ["## Data Exploration Findings", "", exploration_text, ""]
 
     # Model introductions
     lines += ["## The Three Models", ""]
@@ -568,11 +602,55 @@ def build_pptx(results: dict, summary_text: str = "") -> io.BytesIO:
                     run.font.bold = (j == 2)
 
     # ═════════════════════════════════════════════════════════════════════════
+    # SECTION 3b — DATA EXPLORATION (if available)
+    # ═════════════════════════════════════════════════════════════════════════
+
+    exploration_text = load_exploration_report()
+    if exploration_text:
+        expl = _parse_exploration(exploration_text)
+
+        s = blank()
+        section_divider(s, "Section 3\nData Exploration", RGBColor(0x14, 0x6C, 0x43))
+        text(s, Inches(1.5), Inches(4.3), Inches(10), Inches(0.5),
+             "Dataset quality, collinearity, anomalies, readiness score",
+             size=16, color=WHITE)
+
+        # Slide — exploration summary
+        s = blank()
+        header(s, "Data Exploration — Dataset Readiness")
+
+        # Readiness score prominent display
+        score_text = expl["score"] or "Readiness score not found"
+        rect(s, MARGIN, Inches(1.25), Inches(4.2), Inches(1.2), TEAL)
+        text(s, MARGIN + Inches(0.15), Inches(1.35), Inches(3.9), Inches(1.0),
+             score_text, size=18, bold=True, color=WHITE)
+
+        # Key sections on the right
+        section_keys = ["Readiness Verdict", "7. Readiness Verdict",
+                        "Anomalies", "5. Anomalies",
+                        "Collinearity Check", "4. Collinearity Check"]
+        y = Inches(1.25)
+        for sk in section_keys:
+            if sk in expl["sections"] and expl["sections"][sk]:
+                snippet = "\n".join(expl["sections"][sk][:6]).strip()
+                if snippet:
+                    text(s, Inches(5.0), y, Inches(7.7), Inches(1.1),
+                         f"{sk.split('. ')[-1]}: {snippet[:220]}", size=9, color=DARK)
+                    y += Inches(1.15)
+                    if y > Inches(6.5):
+                        break
+
+        # Full text in smaller font below if space allows
+        flat_text = exploration_text[:900]
+        text(s, MARGIN, Inches(2.6), W - MARGIN * 2, Inches(4.5),
+             flat_text, size=8, color=DARK)
+
+    # ═════════════════════════════════════════════════════════════════════════
     # SECTION 4 — THIS RUN'S RESULTS
     # ═════════════════════════════════════════════════════════════════════════
 
     s = blank()
-    section_divider(s, "Section 3\nThis Run — Results", RGBColor(0x1A, 0x53, 0x76))
+    section_divider(s, "Section 4\nThis Run — Results", RGBColor(0x1A, 0x53, 0x76))
     text(s, Inches(1.5), Inches(4.3), Inches(10), Inches(0.5),
          "Model fit · ROI · Channel contribution · Agreement", size=16, color=WHITE)
 
