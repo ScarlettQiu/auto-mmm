@@ -146,7 +146,18 @@ python discover.py --source csv --path ./your_data.csv \
 
 This auto-detects columns, generates `config.json` and `metadata.json`, and pulls your knowledge layer from Notion.
 
-**Option B — use the included DT Mart dataset:**
+**Option B — use the included Conjura eCommerce MMM dataset:**
+
+`data.csv` in this repo is a ready-to-use sample: 132 weekly observations for an Apparel brand (2021–2024), with 8 Google + Meta spend channels and revenue as the KPI. Already profiled and ready to run.
+
+Source: [Multi-Region Marketing Mix Modeling MMM Dataset for Several eCommerce Brands](https://figshare.com/articles/dataset/Multi-Region_Marketing_Mix_Modeling_MMM_Dataset_for_Several_eCommerce_Brands/25314841) — Conjura via Figshare. Contains 93 brands across multiple regions and verticals.
+
+```bash
+# Already included — just run the loop:
+Read program.md and run the loop.
+```
+
+**Option C — use the DT Mart dataset (original example):**
 ```bash
 pip install kagglehub
 python -c "
