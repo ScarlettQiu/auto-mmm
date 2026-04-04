@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-MMM — Round 3 Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #534AB7;
+      --purple-light: #7B72D6;
+      --purple-dark:  #3A3380;
+      --bg:           #0d0d12;
+      --surface:      #16161e;
+      --surface-2:    #1e1e2a;
+      --border:       rgba(255,255,255,0.07);
+      --text:         #f0f0f5;
+      --text-2:       rgba(240,240,245,0.6);
+      --text-3:       rgba(240,240,245,0.35);
+      --orange:       #f0a030;
+      --green:        #28c840;
+      --red:          #e74c3c;
+      --blue:         #1F77B4;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100%;
+    }
+
+    /* ── Slides ──────────────────────────────────────────────────────────── */
+    .slide {
+      scroll-snap-align: start;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 8vw;
+    }
+
+    /* ── Progress bar ─────────────────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--purple-light));
+      transition: width 0.4s ease;
+      z-index: 100;
+      width: 0%;
+    }
+
+    /* ── Nav dots ─────────────────────────────────────────────────────────── */
+    #nav-dots {
+      position: fixed;
+      right: 1.4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      z-index: 100;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active {
+      background: var(--purple);
+      box-shadow: 0 0 8px var(--purple);
+      transform: scale(1.35);
+    }
+
+    /* ── Animations ───────────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-28px); }
+      to   { opacity: 1; transform: translateX(0);     }
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.35; }
+      50%       { opacity: 0.9;  }
+    }
+
+    .reveal { opacity: 0; }
+    .reveal.visible {
+      animation: fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .reveal.visible:nth-child(1) { animation-delay: 0.05s; }
+    .reveal.visible:nth-child(2) { animation-delay: 0.15s; }
+    .reveal.visible:nth-child(3) { animation-delay: 0.25s; }
+    .reveal.visible:nth-child(4) { animation-delay: 0.35s; }
+    .reveal.visible:nth-child(5) { animation-delay: 0.45s; }
+    .reveal.visible:nth-child(6) { animation-delay: 0.55s; }
+    .reveal.visible:nth-child(7) { animation-delay: 0.65s; }
+
+    /* ── Badge ────────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--purple-light);
+      background: rgba(83,74,183,0.15);
+      border: 1px solid rgba(83,74,183,0.35);
+      border-radius: 4px;
+      padding: 0.28rem 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge.green  { color: var(--green);  background: rgba(40,200,64,0.1);  border-color: rgba(40,200,64,0.3);  }
+    .badge.orange { color: var(--orange); background: rgba(240,160,48,0.1); border-color: rgba(240,160,48,0.3); }
+    .badge.red    { color: var(--red);    background: rgba(231,76,60,0.1);  border-color: rgba(231,76,60,0.3);  }
+
+    /* ── Typography ───────────────────────────────────────────────────────── */
+    .slide-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-3);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+    }
+
+    h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.04; letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.6rem,  3.5vw, 2.6rem); font-weight: 700; line-height: 1.1;  letter-spacing: -0.02em; }
+    h3 { font-size: clamp(0.95rem, 1.8vw, 1.25rem); font-weight: 600; }
+
+    p {
+      font-size: clamp(0.83rem, 1.4vw, 0.98rem);
+      line-height: 1.72;
+      color: var(--text-2);
+    }
+
+    /* ── Slide content wrapper ────────────────────────────────────────────── */
+    .slide-content { width: 100%; max-width: 1080px; }
+    .slide-header  { margin-bottom: 2.2rem; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 1 — TITLE                                                         */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    #slide-1 { padding: 0; align-items: stretch; }
+
+    .title-left {
+      flex: 0 0 55%;
+      background: linear-gradient(140deg, var(--purple-dark) 0%, var(--purple) 55%, var(--purple-light) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 5vw;
+      position: relative;
+      overflow: hidden;
+    }
+    .title-left::before {
+      content: '';
+      position: absolute;
+      top: -25%; left: -15%;
+      width: 75%; height: 75%;
+      background: radial-gradient(circle, rgba(255,255,255,0.13) 0%, transparent 68%);
+      pointer-events: none;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    .title-left .badge { margin-bottom: 1.8rem; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff; }
+    .title-left h1 { color: #fff; margin-bottom: 0.9rem; }
+    .title-left > p { color: rgba(255,255,255,0.72); max-width: 34ch; }
+
+    .title-meta { margin-top: 2.5rem; display: flex; gap: 2.5rem; }
+    .title-meta .val { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; color: #fff; }
+    .title-meta .lbl { font-size: 0.75rem; color: rgba(255,255,255,0.55); font-family: 'IBM Plex Mono', monospace; margin-top: 0.1rem; }
+
+    .title-right {
+      flex: 1;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 4vw;
+    }
+
+    .pipeline-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 1.8rem;
+    }
+
+    .agent-stage {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 0;
+      opacity: 0;
+      animation: slideInLeft 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .agent-stage:nth-child(odd)  { animation-delay: 0.25s; }
+    .agent-stage:nth-child(1)    { animation-delay: 0.2s;  }
+    .agent-stage:nth-child(3)    { animation-delay: 0.45s; }
+    .agent-stage:nth-child(5)    { animation-delay: 0.7s;  }
+    .agent-stage:nth-child(7)    { animation-delay: 0.95s; }
+    .agent-stage:nth-child(9)    { animation-delay: 1.2s;  }
+
+    .agent-connector { width: 2px; height: 20px; background: var(--border); margin-left: 17px; }
+
+    .stage-num {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(83,74,183,0.18);
+      border: 1px solid rgba(83,74,183,0.38);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--purple-light);
+      flex-shrink: 0;
+    }
+    .stage-name { font-weight: 600; font-size: 0.93rem; }
+    .stage-desc { font-size: 0.75rem; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; margin-top: 0.1rem; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 2 — DATASET                                                        */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      width: 100%;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.4rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(83,74,183,0.4); box-shadow: 0 0 18px rgba(83,74,183,0.1); }
+    .stat-card .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.45rem; }
+    .stat-card .val { font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em; }
+    .stat-card .desc { font-size: 0.78rem; color: var(--text-3); margin-top: 0.3rem; }
+    .val.purple { color: var(--purple-light); }
+    .val.green  { color: var(--green);  }
+    .val.orange { color: var(--orange); }
+    .val.red    { color: var(--red);    }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 3 — THREE MODELS                                                   */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .model-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; width: 100%; }
+
+    .model-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.7rem;
+    }
+    .model-icon {
+      width: 38px; height: 38px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      margin-bottom: 0.9rem;
+    }
+    .model-card h3 { margin-bottom: 0.3rem; }
+    .model-tagline { font-size: 0.75rem; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; margin-bottom: 0.9rem; }
+    .pro-item, .con-item { font-size: 0.8rem; line-height: 1.65; color: var(--text-2); }
+    .pro-item::before { content: '+ '; color: var(--green); }
+    .con-item::before { content: '− '; color: var(--red);   }
+    .mape-pill {
+      display: inline-block; margin-top: 1rem;
+      padding: 0.28rem 0.7rem; border-radius: 20px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 4 — TUNING HISTORY                                                 */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .round-table { width: 100%; border-collapse: collapse; }
+    .round-table th {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.67rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3);
+      padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+    }
+    .round-table td { padding: 0.95rem 1rem; font-size: 0.88rem; border-bottom: 1px solid var(--border); color: var(--text-2); }
+    .round-table tr:last-child td { border-bottom: none; }
+    .round-table td:first-child { font-weight: 600; color: var(--text); }
+    .delta-good { color: var(--green); font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; }
+    .delta-bad  { color: var(--red);   font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; }
+
+    .mape-trail { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .mape-node {
+      padding: 0.38rem 0.8rem; border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      background: rgba(31,119,180,0.15); border: 1px solid rgba(31,119,180,0.35); color: #5BA3D9;
+    }
+    .mape-node.best { background: rgba(40,200,64,0.12); border-color: rgba(40,200,64,0.4); color: var(--green); }
+    .mape-arrow { color: var(--text-3); font-size: 0.9rem; }
+    .mape-note  { font-size: 0.82rem; color: var(--text-2); margin-left: 0.5rem; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 5 — CHANNEL ROI                                                    */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .bar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.85rem; }
+    .bar-label { width: 155px; flex-shrink: 0; font-size: 0.86rem; font-weight: 500; text-align: right; color: var(--text-2); }
+    .bar-track { flex: 1; height: 26px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
+    .bar-fill  { height: 100%; border-radius: 5px; width: 0%; transition: width 1.1s cubic-bezier(0.16,1,0.3,1); }
+    .bar-val   { width: 56px; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--text-2); }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 6 — AFFILIATES QUOTE                                               */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    #slide-6 { flex-direction: column; text-align: center; }
+
+    .quote-text {
+      font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.28;
+      letter-spacing: -0.025em;
+      max-width: 22ch;
+      margin: 0 auto 1.4rem;
+    }
+    .quote-text em { color: var(--purple-light); font-style: normal; }
+    .quote-sub { font-size: 0.85rem; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; }
+
+    .triple-stat { display: flex; gap: 3.5rem; justify-content: center; margin-top: 3rem; }
+    .triple-stat .n { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--purple-light); letter-spacing: -0.04em; }
+    .triple-stat .d { font-size: 0.75rem; color: var(--text-3); font-family: 'IBM Plex Mono', monospace; margin-top: 0.15rem; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 7 — CONTRIBUTIONS                                                  */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; width: 100%; }
+    .col-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.67rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 8 — LIMITATIONS                                                    */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .issue-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid;
+      border-radius: 0 10px 10px 0;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      margin-bottom: 0.9rem;
+    }
+    .issue-card.red    { border-left-color: var(--red);    }
+    .issue-card.orange { border-left-color: var(--orange); }
+    .issue-card.purple { border-left-color: var(--purple); }
+    .issue-icon  { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .issue-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.25rem; color: var(--text); }
+    .issue-body  { font-size: 0.8rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+    /* SLIDE 9 — RECOMMENDATIONS                                                */
+    /* ─────────────────────────────────────────────────────────────────────── */
+    .rec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.5rem;
+      display: flex;
+      gap: 1.4rem;
+      align-items: flex-start;
+      margin-bottom: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .rec-card:hover { border-color: rgba(83,74,183,0.4); }
+    .rec-num {
+      width: 2.2rem; height: 2.2rem; border-radius: 50%;
+      background: rgba(83,74,183,0.18); border: 1px solid rgba(83,74,183,0.38);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: var(--purple-light); flex-shrink: 0;
+    }
+    .rec-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.25rem; }
+    .rec-body  { font-size: 0.8rem; color: var(--text-2); line-height: 1.65; }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-height: 700px) {
+      .slide { padding: 2.5rem 6vw; }
+      .slide-header { margin-bottom: 1.4rem; }
+      #nav-dots { display: none; }
+    }
+    @media (max-width: 768px) {
+      #slide-1 { flex-direction: column; }
+      .title-left, .title-right { flex: none; width: 100%; padding: 3rem 5vw; }
+      .model-grid { grid-template-columns: 1fr; }
+      .two-col    { grid-template-columns: 1fr; }
+      .triple-stat { gap: 2rem; }
+      #nav-dots { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal.visible, .agent-stage { animation-duration: 0.15s !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="nav-dots"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-1">
+  <div class="title-left">
+    <div class="badge reveal">ROUND 3 · APPROVED ✓</div>
+    <h1 class="reveal" style="color:#fff; margin-top:0.4rem;">Auto-MMM</h1>
+    <p class="reveal" style="color:rgba(255,255,255,0.72); max-width:34ch; margin-top:0.6rem;">
+      Autonomous Marketing Mix Modelling — three independent models, four specialist agents, zero manual tuning.
+    </p>
+    <div class="title-meta reveal">
+      <div>
+        <div class="val" style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:#fff;">3.56%</div>
+        <div class="lbl" style="font-size:0.72rem; color:rgba(255,255,255,0.52); font-family:'IBM Plex Mono',monospace;">Test MAPE</div>
+      </div>
+      <div>
+        <div class="val" style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:#fff;">0.90</div>
+        <div class="lbl" style="font-size:0.72rem; color:rgba(255,255,255,0.52); font-family:'IBM Plex Mono',monospace;">Affiliates ROI</div>
+      </div>
+      <div>
+        <div class="val" style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:#fff;">3</div>
+        <div class="lbl" style="font-size:0.72rem; color:rgba(255,255,255,0.52); font-family:'IBM Plex Mono',monospace;">Rounds Run</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="title-right">
+    <div class="pipeline-label">Agent Pipeline</div>
+    <div class="agent-stage">
+      <div class="stage-num">1</div>
+      <div>
+        <div class="stage-name">Tuner</div>
+        <div class="stage-desc">Adjusts adstock &amp; hill params each round</div>
+      </div>
+    </div>
+    <div class="agent-connector"></div>
+    <div class="agent-stage">
+      <div class="stage-num">2</div>
+      <div>
+        <div class="stage-name">Models</div>
+        <div class="stage-desc">Ridge · NNLS · PyMC run in parallel</div>
+      </div>
+    </div>
+    <div class="agent-connector"></div>
+    <div class="agent-stage">
+      <div class="stage-num">3</div>
+      <div>
+        <div class="stage-name">Analyst</div>
+        <div class="stage-desc">Interprets ROI, contributions, model fit</div>
+      </div>
+    </div>
+    <div class="agent-connector"></div>
+    <div class="agent-stage">
+      <div class="stage-num">4</div>
+      <div>
+        <div class="stage-name">Critic</div>
+        <div class="stage-desc">6-point quality check · APPROVE / REVISE</div>
+      </div>
+    </div>
+    <div class="agent-connector"></div>
+    <div class="agent-stage">
+      <div class="stage-num">5</div>
+      <div>
+        <div class="stage-name">Reporter</div>
+        <div class="stage-desc">CMO brief · deck · this presentation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 2 — THE DATASET
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">01 — The Dataset</div>
+      <h2 class="reveal">DT Mart · 12 months of media spend</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:55ch;">Monthly data from an e-commerce retailer across 8 paid channels. KPI is total GMV in INR.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card reveal">
+        <div class="lbl">Training Observations</div>
+        <div class="val purple">10</div>
+        <div class="desc">12 total · 2 held out for testing</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="lbl">Media Channels</div>
+        <div class="val orange">8</div>
+        <div class="desc">TV, Digital, SEM, Affiliates, Sponsorship + 3</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="lbl">Average Monthly GMV</div>
+        <div class="val">338M</div>
+        <div class="desc">INR · all months except one anomaly</div>
+      </div>
+      <div class="stat-card reveal" style="border-color: rgba(231,76,60,0.3);">
+        <div class="lbl">August 2015 Anomaly</div>
+        <div class="val red">419K</div>
+        <div class="desc">vs 338M average — likely data entry error</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 3 — THREE MODELS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">02 — Three Models</div>
+      <h2 class="reveal">Why three? Each has a different blind spot.</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:65ch;">Agreement across models is signal. Disagreement is a diagnostic. Running all three is the only way to know which result to trust.</p>
+    </div>
+    <div class="model-grid">
+      <div class="model-card reveal" style="border-top: 2px solid #1F77B4;">
+        <div class="model-icon" style="background:rgba(31,119,180,0.15);">📐</div>
+        <h3>Ridge Regression</h3>
+        <div class="model-tagline">frequentist · L2 regularisation · bootstrap CI</div>
+        <div class="pro-item">Fast and interpretable coefficients</div>
+        <div class="pro-item">200-sample bootstrap uncertainty bounds</div>
+        <div class="pro-item">Best holdout accuracy: 3.56% MAPE</div>
+        <div style="margin-top:0.5rem;">
+          <div class="con-item">Shrinks correlated channels to zero</div>
+          <div class="con-item">No positivity constraint on ROI</div>
+        </div>
+        <div class="mape-pill" style="background:rgba(31,119,180,0.14); color:#5BA3D9;">Test MAPE 3.56%</div>
+      </div>
+      <div class="model-card reveal" style="border-top: 2px solid #2CA02C;">
+        <div class="model-icon" style="background:rgba(44,160,44,0.15);">⚖️</div>
+        <h3>NNLS (LightweightMMM)</h3>
+        <div class="model-tagline">non-negative least squares · always positive ROI</div>
+        <div class="pro-item">Enforces positive ROI — realistic constraint</div>
+        <div class="pro-item">Captures gross correlation signal</div>
+        <div class="pro-item">Complements Ridge's shrinkage behaviour</div>
+        <div style="margin-top:0.5rem;">
+          <div class="con-item">No uncertainty quantification</div>
+          <div class="con-item">Higher test MAPE: 7.56%</div>
+        </div>
+        <div class="mape-pill" style="background:rgba(44,160,44,0.12); color:#5CC45C;">Test MAPE 7.56%</div>
+      </div>
+      <div class="model-card reveal" style="border-top: 2px solid var(--purple);">
+        <div class="model-icon" style="background:rgba(83,74,183,0.15);">🎲</div>
+        <h3>PyMC (Bayesian)</h3>
+        <div class="model-tagline">posterior distributions · MCMC sampling</div>
+        <div class="pro-item">Full uncertainty quantification</div>
+        <div class="pro-item">Incorporate prior business knowledge</div>
+        <div class="pro-item">Most principled for small samples</div>
+        <div style="margin-top:0.5rem;">
+          <div class="con-item">Requires JAX install (NNLS fallback used)</div>
+          <div class="con-item">Computationally slow on limited data</div>
+        </div>
+        <div class="mape-pill" style="background:rgba(83,74,183,0.14); color:var(--purple-light);">JAX fallback active</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 4 — TUNING HISTORY
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">03 — Autonomous Tuning</div>
+      <h2 class="reveal">Three rounds, one parameter changed per round</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:58ch;">Each round the Tuner agent picks one change, models re-run, and the Critic approves or requests revision before the next round begins.</p>
+    </div>
+    <div class="reveal" style="background:var(--surface); border:1px solid var(--border); border-radius:13px; overflow:hidden; margin-bottom:1.4rem;">
+      <table class="round-table">
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Parameter Change</th>
+            <th>Ridge Test MAPE</th>
+            <th>NNLS Test MAPE</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>R1</td>
+            <td>Baseline · adstock_max_lag=3 · hill_slope=2.0</td>
+            <td style="color:var(--text);">7.80%</td>
+            <td style="color:var(--text);">7.90%</td>
+            <td><span class="badge" style="font-size:0.62rem;">APPROVED</span></td>
+          </tr>
+          <tr>
+            <td>R2</td>
+            <td>adstock_max_lag: 3 → 1 (reduce carryover)</td>
+            <td style="color:var(--text);">5.66% <span class="delta-good">▼ 27%</span></td>
+            <td style="color:var(--text);">7.34% <span class="delta-good">▼ 7%</span></td>
+            <td><span class="badge" style="font-size:0.62rem;">APPROVED</span></td>
+          </tr>
+          <tr>
+            <td>R3</td>
+            <td>hill_slope: 2.0 → 1.5 (gentler saturation)</td>
+            <td style="color:var(--green); font-weight:600;">3.56% <span class="delta-good">▼ 37%</span></td>
+            <td style="color:var(--text);">7.56% <span class="delta-bad">▲ 3%</span></td>
+            <td><span class="badge green" style="font-size:0.62rem;">APPROVED ✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mape-trail reveal">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.1em;">Ridge MAPE:</span>
+      <span class="mape-node">7.80%</span>
+      <span class="mape-arrow">→</span>
+      <span class="mape-node">5.66%</span>
+      <span class="mape-arrow">→</span>
+      <span class="mape-node best">3.56% ✓</span>
+      <span class="mape-note">— 54% total improvement over 3 rounds</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 5 — CHANNEL ROI
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">04 — Channel ROI</div>
+      <h2 class="reveal">Affiliates: the only channel with measurable positive ROI</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:62ch;">NNLS return per INR 1 spent. Six channels show zero — this reflects insufficient data to separate their effects, not confirmed zero effectiveness.</p>
+    </div>
+    <div id="roi-chart" class="reveal"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 6 — THE AFFILIATES FINDING
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-6">
+  <div class="reveal"><div class="badge green" style="margin-bottom:2rem;">Headline Finding</div></div>
+  <div class="quote-text reveal">
+    <em>Three</em> independent rounds.<br>
+    <em>Two</em> different methods.<br>
+    Same answer: Affiliates <em>works.</em>
+  </div>
+  <div class="quote-sub reveal" style="margin-top:0.9rem;">
+    Round 1: ROI 0.75 &nbsp;·&nbsp; Round 2: ROI 0.75 &nbsp;·&nbsp; Round 3: ROI 0.90
+  </div>
+  <div class="triple-stat reveal">
+    <div class="triple-stat-item">
+      <div class="n">0.90</div>
+      <div class="d">NNLS ROI (R3)</div>
+    </div>
+    <div class="triple-stat-item">
+      <div class="n">16.4%</div>
+      <div class="d">of GMV attributed</div>
+    </div>
+    <div class="triple-stat-item">
+      <div class="n">3/3</div>
+      <div class="d">rounds positive</div>
+    </div>
+  </div>
+  <p class="reveal" style="margin-top:2rem; max-width:52ch; text-align:center; font-size:0.82rem; color:var(--text-3);">
+    CV=100% between Ridge and NNLS is explained by Ridge's L2 penalty shrinking correlated features — not a model error or contradicting signal.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 7 — CONTRIBUTION BREAKDOWN
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-7">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">05 — Contribution Breakdown</div>
+      <h2 class="reveal">How each model attributes GMV</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:58ch;">Ridge attributes 100% to baseline (regularisation shrinks all channels on 10 obs). NNLS allocates 24.6% to media — within a plausible MMM range.</p>
+    </div>
+    <div class="two-col reveal">
+      <div>
+        <div class="col-label">Ridge Regression</div>
+        <div id="ridge-contrib"></div>
+      </div>
+      <div>
+        <div class="col-label">NNLS (LightweightMMM)</div>
+        <div id="nnls-contrib"></div>
+      </div>
+    </div>
+    <p class="reveal" style="margin-top:1.4rem; font-size:0.8rem; color:var(--text-3);">
+      The gap is structural, not a contradiction: L2 regularisation on highly correlated predictors with only 10 training observations forces Ridge coefficients toward zero. NNLS without the penalty allocates that signal to media.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 8 — LIMITATIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-8">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">06 — Data Limitations</div>
+      <h2 class="reveal">Three structural issues, honestly stated</h2>
+      <p class="reveal" style="margin-top:0.5rem; max-width:55ch;">No amount of model tuning will resolve these. They require better data.</p>
+    </div>
+    <div>
+      <div class="issue-card red reveal">
+        <div class="issue-icon">⚠️</div>
+        <div>
+          <div class="issue-title">August 2015 Anomaly</div>
+          <div class="issue-body">GMV = INR 419,196 in a dataset where every other month exceeds INR 176M. Almost certainly a data entry error. It inflates train MAPE to 310–877% and distorts all model diagnostics. Fixing this is the single highest-leverage action available.</div>
+        </div>
+      </div>
+      <div class="issue-card orange reveal">
+        <div class="issue-icon">📏</div>
+        <div>
+          <div class="issue-title">Sample Size: 10 observations for 8 channels</div>
+          <div class="issue-body">10 training observations cannot support 8 channel predictors simultaneously. Zero ROI on 6 channels means unmeasurable — not ineffective. Weekly data for 12+ months (52+ obs) is needed to support all channels concurrently.</div>
+        </div>
+      </div>
+      <div class="issue-card purple reveal">
+        <div class="issue-icon">🔗</div>
+        <div>
+          <div class="issue-title">Collinearity: Channels co-spent in the same months</div>
+          <div class="issue-body">Affiliates, Sponsorship, and Online.marketing all spent heavily in Sep/Nov 2015 and Mar 2016. Monthly data cannot disentangle their individual contributions. Weekly or daily data with more natural variation would help separate them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SLIDE 9 — RECOMMENDATIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="slide-9">
+  <div class="slide-content">
+    <div class="slide-header">
+      <div class="slide-label reveal">07 — Recommendations</div>
+      <h2 class="reveal">Three actions, in priority order</h2>
+    </div>
+    <div>
+      <div class="rec-card reveal">
+        <div class="rec-num">1</div>
+        <div>
+          <div class="rec-title">Protect Affiliates budget</div>
+          <div class="rec-body">Three independent rounds, two model types, consistent positive ROI (0.75–0.90 INR per INR 1 spent). This is the strongest finding the current dataset can support. Do not reduce Affiliates spend pending a better-powered analysis.</div>
+        </div>
+      </div>
+      <div class="rec-card reveal">
+        <div class="rec-num">2</div>
+        <div>
+          <div class="rec-title">Investigate the August 2015 data point first</div>
+          <div class="rec-body">INR 419,196 GMV is almost certainly a data entry error — missing zeros or wrong month assignment. Correcting it could unlock measurable signal for the 6 currently zero-ROI channels. Check source systems against the raw transaction log.</div>
+        </div>
+      </div>
+      <div class="rec-card reveal">
+        <div class="rec-num">3</div>
+        <div>
+          <div class="rec-title">Collect weekly data for 12+ months before re-running</div>
+          <div class="rec-body">Monthly data gives 10 training observations — statistically underpowered for 8 channels. Weekly data gives 52+ observations per year, enough to support all channels simultaneously with proper uncertainty bounds. Aim for 18 months of weekly data.</div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top:1.4rem; padding:1rem 1.4rem; background:rgba(83,74,183,0.08); border:1px solid rgba(83,74,183,0.25); border-radius:10px; font-size:0.82rem; color:var(--text-2);">
+      <strong style="color:var(--purple-light);">Bottom line:</strong> Affiliates has now shown consistent positive ROI across three independent rounds and two model types — this is the strongest finding the current dataset can support. For all other channels, do not make budget decisions based on this analysis.
+    </div>
+  </div>
+</section>
+
+<script>
+  // ── Chart data ──────────────────────────────────────────────────────────────
+  const ROI_DATA = [
+    { channel: 'Affiliates',        roi: 0.898, color: '#534AB7' },
+    { channel: 'Sponsorship',       roi: 0.061, color: '#7B72D6' },
+    { channel: 'TV',                roi: 0.000, color: '#2a2a38' },
+    { channel: 'Digital',           roi: 0.000, color: '#2a2a38' },
+    { channel: 'SEM',               roi: 0.000, color: '#2a2a38' },
+    { channel: 'Online.marketing',  roi: 0.000, color: '#2a2a38' },
+    { channel: 'Content.Marketing', roi: 0.000, color: '#2a2a38' },
+    { channel: 'Radio',             roi: 0.000, color: '#2a2a38' },
+  ];
+
+  const RIDGE_CONTRIB = [
+    { label: 'Baseline',  pct: 100.0, color: '#3a3a52' },
+    { label: 'All Media', pct:   0.0, color: '#534AB7' },
+  ];
+
+  const NNLS_CONTRIB = [
+    { label: 'Affiliates',  pct: 16.37, color: '#534AB7' },
+    { label: 'Sponsorship', pct:  8.19, color: '#7B72D6' },
+    { label: 'Baseline',    pct: 75.44, color: '#3a3a52' },
+    { label: 'Other Media', pct:  0.00, color: '#2a2a38' },
+  ];
+
+  // ── Build bar charts ────────────────────────────────────────────────────────
+  function buildBars(containerId, data, maxVal, unit) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = data.map(d => {
+      const pct = maxVal > 0 ? (d.roi !== undefined ? d.roi : d.pct) / maxVal * 82 : 0;
+      const display = d.roi !== undefined
+        ? d.roi.toFixed(3)
+        : d.pct.toFixed(1) + '%';
+      return `
+        <div class="bar-row">
+          <div class="bar-label">${d.channel || d.label}</div>
+          <div class="bar-track">
+            <div class="bar-fill" data-pct="${pct}" style="background:${d.color};"></div>
+          </div>
+          <div class="bar-val">${display}</div>
+        </div>`;
+    }).join('');
+  }
+
+  const maxROI = Math.max(...ROI_DATA.map(d => d.roi), 0.001);
+  buildBars('roi-chart',     ROI_DATA,     maxROI, '');
+  buildBars('ridge-contrib', RIDGE_CONTRIB, 100,   '%');
+  buildBars('nnls-contrib',  NNLS_CONTRIB,  100,   '%');
+
+  // ── Animate bars ────────────────────────────────────────────────────────────
+  function animateBars(root) {
+    root.querySelectorAll('.bar-fill').forEach(bar => {
+      const target = parseFloat(bar.dataset.pct) || 0;
+      bar.style.width = '0%';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        bar.style.transition = 'width 1.1s cubic-bezier(0.16,1,0.3,1)';
+        bar.style.width = target + '%';
+      }));
+    });
+  }
+
+  // ── Slides & navigation ─────────────────────────────────────────────────────
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const N = slides.length;
+  let current = 0;
+
+  // Build nav dots
+  const dotsEl = document.getElementById('nav-dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function updateUI(idx) {
+    current = idx;
+    document.getElementById('progress-bar').style.width =
+      (N > 1 ? (idx / (N - 1)) * 100 : 0) + '%';
+    document.querySelectorAll('.dot').forEach((d, i) =>
+      d.classList.toggle('active', i === idx));
+  }
+
+  function goTo(idx) {
+    idx = Math.max(0, Math.min(N - 1, idx));
+    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // IntersectionObserver — reveal elements + animate bars
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const idx = slides.indexOf(entry.target);
+      if (idx !== -1) updateUI(idx);
+      entry.target.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      if (entry.target.querySelector('.bar-fill')) {
+        setTimeout(() => animateBars(entry.target), 350);
+      }
+    });
+  }, { threshold: 0.45 });
+
+  slides.forEach(s => io.observe(s));
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    const next = ['ArrowDown','ArrowRight',' ','PageDown'].includes(e.key);
+    const prev = ['ArrowUp','ArrowLeft','PageUp'].includes(e.key);
+    if (next || prev) { e.preventDefault(); goTo(current + (next ? 1 : -1)); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0);     }
+    if (e.key === 'End')  { e.preventDefault(); goTo(N - 1); }
+  });
+
+  // Wheel (debounced)
+  let wTimer = null;
+  document.addEventListener('wheel', e => {
+    if (wTimer) return;
+    e.preventDefault();
+    goTo(current + (e.deltaY > 0 ? 1 : -1));
+    wTimer = setTimeout(() => wTimer = null, 820);
+  }, { passive: false });
+
+  // Touch
+  let ty0 = 0;
+  document.addEventListener('touchstart', e => ty0 = e.touches[0].clientY, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dy = ty0 - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 50) goTo(current + (dy > 0 ? 1 : -1));
+  });
+</script>
+</body>
+</html>
