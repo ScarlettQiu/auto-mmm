@@ -29,8 +29,9 @@ ORCHESTRATOR (program.md)
         ├── run_models.py
         │       Runs all 3 MMM models in sequence:
         │         • Ridge      — regularised regression + 200-sample bootstrap CI
-        │         • PyMC       — full Bayesian with DelayedSaturatedMMM (or NNLS fallback)
-        │         • LightMMM   — Google JAX-based Hill + adstock (or NNLS fallback)
+        │         • PyMC       — full Bayesian with DelayedSaturatedMMM
+        │         • LightMMM   — Google JAX-based Hill + adstock
+        │       Fallback to scipy NNLS only if JAX / pymc-marketing not installed.
         │       Saves results/latest.json + rounds/R{N}_results.json
         │
         ├── ANALYST (agents/analyst.md)
@@ -101,7 +102,7 @@ The auto-MMM loop runs all three, scores their agreement, and flags where they d
 | **PyMC** | Full Bayesian with DelayedSaturatedMMM | Posterior distribution | `pip install pymc-marketing` |
 | **LightweightMMM** | Google's JAX-based Hill + adstock | Posterior samples | `pip install lightweight_mmm` |
 
-All three models fall back gracefully if optional dependencies are missing — Ridge always runs, LightweightMMM falls back to scipy NNLS.
+Ridge always runs with no extra dependencies. LightweightMMM and PyMC fall back to scipy NNLS only if JAX / pymc-marketing are not installed — install them to get full model outputs.
 
 ---
 
@@ -164,10 +165,12 @@ cd auto-mmm
 pip install -r requirements.txt
 ```
 
-Optional (recommended for full Bayesian model):
+Install JAX and the full model libraries (recommended):
 ```bash
-pip install pymc-marketing
+pip install jax jaxlib lightweight_mmm pymc-marketing
 ```
+
+Both install cleanly on Python 3.10 (CPU, Apple Silicon and x86). Without them, LightweightMMM and PyMC fall back to scipy NNLS.
 
 ### 2. Download the dataset
 
@@ -309,10 +312,11 @@ tabulate>=0.9.0
 python-pptx>=0.6.21
 ```
 
-Optional:
+Recommended (enables full LightweightMMM and PyMC models):
 ```
-pymc-marketing    # full Bayesian MMM
-lightweight_mmm   # Google JAX-based MMM
-jax jaxlib        # required for lightweight_mmm
+jax>=0.6.0
+jaxlib>=0.6.0
+lightweight_mmm>=0.1.9
+pymc-marketing
 ```
 
