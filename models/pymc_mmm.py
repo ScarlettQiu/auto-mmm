@@ -22,8 +22,7 @@ def run(
     cfg: dict,
 ) -> dict:
     try:
-        import pymc as pm
-        from pymc_marketing.mmm import DelayedSaturatedMMM
+        from pymc_marketing.mmm import MMM, GeometricAdstock, HillSaturation
     except ImportError:
         return {
             "model": "pymc",
@@ -33,64 +32,58 @@ def run(
 
     channels = cfg["media_channels"]
     controls = [c for c in cfg["control_variables"] if c in train_df.columns]
-
-    date_col = "date"
     kpi_col  = "kpi"
 
-    # PyMC-Marketing expects raw spend + date; it handles adstock/saturation internally
-    # Re-load raw spend from adstock columns (pre-adstock = original spend)
-    # We use the saturated columns as X since we've already transformed
     channel_cols = [f"{ch}_saturated" for ch in channels if f"{ch}_saturated" in train_df.columns]
     valid_channels = [ch for ch in channels if f"{ch}_saturated" in train_df.columns]
 
-    X_cols = channel_cols + [c for c in controls if c in train_df.columns]
-
     try:
-        mmm = DelayedSaturatedMMM(
-            date_column=date_col,
+        import pytensor
+        pytensor.config.cxx = ""  # suppress g++ warning
+
+        mmm = MMM(
+            date_column="date",
             channel_columns=channel_cols,
-            control_columns=[c for c in controls if c in train_df.columns],
-            adstock_max_lag=1,  # already adstocked
+            control_columns=controls,
+            adstock=GeometricAdstock(l_max=cfg.get("adstock_max_lag", 1)),
+            saturation=HillSaturation(),
         )
+
+        X_train = train_df.drop(columns=[kpi_col])
+        y_train = train_df[kpi_col]
+        X_test  = test_df.drop(columns=[kpi_col])
 
         mmm.fit(
-            train_df.rename(columns={kpi_col: "y"}),
-            target_col="y",
-            chains=2,
-            draws=cfg.get("pymc_samples", 500),
-            tune=cfg.get("pymc_tune", 250),
+            X=X_train, y=y_train,
             progressbar=False,
+            draws=cfg.get("pymc_samples", 300),
+            tune=cfg.get("pymc_tune", 200),
+            chains=1,
         )
 
-        # Posterior predictive
-        ppc = mmm.sample_posterior_predictive(train_df)
-        y_pred_train = ppc["y"].mean(("chain", "draw")).values
+        import numpy as _np
+        ppc_train = mmm.sample_posterior_predictive(X_train, combined=True, original_scale=True)
+        y_pred_train = _np.array(ppc_train["y"]).mean(axis=1)  # shape (dates, samples) → (dates,)
+        ppc_test = mmm.sample_posterior_predictive(X_test, combined=True, original_scale=True)
+        y_pred_test = _np.array(ppc_test["y"]).mean(axis=1)
 
-        # Channel contributions from posterior
-        contributions = mmm.get_channel_contributions_share_of_contribution_original_scale()
-        total_kpi = float(train_df[kpi_col].sum())
-
+        total_kpi = float(y_train.sum())
+        contributions = mmm.compute_channel_contribution_original_scale()
+        # channel coord is the saturated column name e.g. "TV_saturated"
         channel_contribs = {}
         for ch, col in zip(valid_channels, channel_cols):
-            share = float(contributions.sel(channel=col).mean())
-            channel_contribs[ch] = share * total_kpi
+            channel_contribs[ch] = float(contributions.sel(channel=col).values.sum())
 
         roi = {}
         for ch in valid_channels:
-            adstock_col = f"{ch}_adstock"
-            spend = train_df[adstock_col].sum() if adstock_col in train_df.columns else 1
+            spend = train_df[f"{ch}_adstock"].sum() if f"{ch}_adstock" in train_df.columns else 1
             roi[ch] = float(channel_contribs[ch] / spend) if spend > 0 else 0.0
 
-        train_r2 = 1 - np.var(train_df[kpi_col].values - y_pred_train) / np.var(train_df[kpi_col].values)
-        train_mape = _mape(train_df[kpi_col].values, y_pred_train)
-
-        # Test prediction
-        ppc_test = mmm.sample_posterior_predictive(test_df)
-        y_pred_test = ppc_test["y"].mean(("chain", "draw")).values
-        test_mape = _mape(test_df[kpi_col].values, y_pred_test)
+        train_r2   = 1 - np.var(y_train.values - y_pred_train) / np.var(y_train.values)
+        train_mape = _mape(y_train.values, y_pred_train)
+        test_mape  = _mape(test_df[kpi_col].values, y_pred_test)
 
     except Exception as e:
-        # Fallback: simple Bayesian linear regression via PyMC directly
         return _fallback_pymc(train_df, test_df, cfg, str(e))
 
     return {
@@ -129,7 +122,7 @@ def _fallback_pymc(train_df, test_df, cfg, original_error: str) -> dict:
         Xs = (X - X_mean) / X_std
         ys = (y - y_mean) / y_std
 
-        with pm.Model() as model:
+        with pm.Model():
             alpha = pm.Normal("alpha", mu=0, sigma=1)
             betas = pm.HalfNormal("betas", sigma=1, shape=Xs.shape[1])
             sigma = pm.HalfNormal("sigma", sigma=1)

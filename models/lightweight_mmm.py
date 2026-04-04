@@ -27,7 +27,8 @@ def run(
         from lightweight_mmm import lightweight_mmm, preprocessing
         import jax.numpy as jnp
         return _run_lightweight(train_df, test_df, cfg, lightweight_mmm, preprocessing, jnp)
-    except ImportError:
+    except Exception:
+        # ImportError (not installed) or runtime error (JAX API incompatibility)
         return _run_numpy_fallback(train_df, test_df, cfg)
 
 
