@@ -66,7 +66,7 @@ def build_contrib_js(contrib_df):
         "google_shopping": "#c06060",
         "google_search":   "#E07070",
     }
-    default_color = "#1a2240"
+    default_color = "#d0d0da"
 
     # Filter to channels with NNLS > 0
     nnls_rows = contrib_df[contrib_df["lightweight_mmm"] > 0].sort_values("lightweight_mmm", ascending=False)
@@ -102,7 +102,6 @@ def get_best_mape(fit_df):
 
 def patch_html(html, roi_js, contrib_js, state, fit_df):
     round_n = state["current_round"]
-    best_mape = state.get("best_test_mape", "?")
 
     # ── JS data blocks ─────────────────────────────────────────────────
     html = re.sub(
