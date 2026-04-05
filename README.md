@@ -1,5 +1,7 @@
 # PrismMMM
 
+**[→ Live Report](https://scarlettqiu.github.io/prismmmm/presentation.html)**
+
 Autonomous Marketing Mix Modeling powered by Claude. Point an AI agent at `program.md` and it runs **three independent MMM models**, critiques its own analysis through a five-agent loop, iterates on model configuration, and produces a stakeholder report — without human involvement.
 
 The three-model approach is deliberate: **Ridge** (fast, regularised), **PyMC** (Bayesian), and **LightweightMMM** (positive-constrained) each make different assumptions. Where all three agree, you can act with confidence. Where they disagree, that's a diagnostic — thin data, collinearity, or a modelling assumption worth questioning. No single model can tell you this.
