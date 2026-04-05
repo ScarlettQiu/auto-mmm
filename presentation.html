@@ -523,6 +523,21 @@
 <div id="dots"></div>
 
 <!-- ═══════════════════════════════════════════════════════════
+     S1 — TITLE
+     ═══════════════════════════════════════════════════════════ -->
+<section class="slide" id="s1">
+  <div class="badge r kicker">Round 2 · Critic Approved ✓</div>
+  <h1 class="r" style="margin-top:.8rem;">Auto-<span>MMM</span></h1>
+  <p class="r" style="margin-top:.9rem;">Autonomous Marketing Mix Modelling — three independent models,<br>five specialist agents, zero manual tuning.</p>
+  <div class="hero-stats r">
+    <div class="hero-stat"><div class="v green">20.4%</div><div class="l">Best Test MAPE</div></div>
+    <div class="hero-stat"><div class="v red">4.0</div><div class="l">Meta Instagram ROI</div></div>
+    <div class="hero-stat"><div class="v">2</div><div class="l">Rounds Run</div></div>
+    <div class="hero-stat"><div class="v">13%</div><div class="l">MAPE Reduction</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
      S0 — INTRO: WHAT IS AUTO-MMM
      ═══════════════════════════════════════════════════════════ -->
 <section class="slide" id="s0">
@@ -696,21 +711,6 @@
 
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════════════
-     S1 — TITLE
-     ═══════════════════════════════════════════════════════════ -->
-<section class="slide" id="s1">
-  <div class="badge r kicker">Round 2 · Critic Approved ✓</div>
-  <h1 class="r" style="margin-top:.8rem;">Auto-<span>MMM</span></h1>
-  <p class="r" style="margin-top:.9rem;">Autonomous Marketing Mix Modelling — three independent models,<br>five specialist agents, zero manual tuning.</p>
-  <div class="hero-stats r">
-    <div class="hero-stat"><div class="v green">20.4%</div><div class="l">Best Test MAPE</div></div>
-    <div class="hero-stat"><div class="v red">4.0</div><div class="l">Meta Instagram ROI</div></div>
-    <div class="hero-stat"><div class="v">2</div><div class="l">Rounds Run</div></div>
-    <div class="hero-stat"><div class="v">13%</div><div class="l">MAPE Reduction</div></div>
   </div>
 </section>
 
@@ -1159,7 +1159,7 @@ renderBars('nnls-contrib-s7',  NNLS,  100);
 
 // ── Animate bars ───────────────────────────────────────────────────────
 function animateBars(root) {
-  root.querySelectorAll('.bar-fill').forEach(b => {
+  root.querySelectorAll('.bar-fill, .spend-bar-fill, .corr-fill').forEach(b => {
     const t = parseFloat(b.dataset.pct)||0;
     b.style.width = '0%';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
