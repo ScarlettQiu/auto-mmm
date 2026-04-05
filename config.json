@@ -17,7 +17,7 @@
   "control_variables": [],
   "adstock_max_lag": 1,
   "hill_slope": 1.5,
-  "hill_ec": 0.5,
+  "hill_ec": 0.3,
   "n_bootstrap": 200,
   "pymc_samples": 200,
   "pymc_tune": 100,
