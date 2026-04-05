@@ -500,6 +500,9 @@
 
     /* ── Responsive — tablet & mobile ── */
     @media (max-width: 860px) {
+      .kl-flow { grid-template-columns: 1fr 1fr !important; }
+      .kl-flow > [style*="font-size:1.1rem"] { display: none; }
+
       /* Allow slides taller than viewport to scroll freely */
       html { scroll-snap-type: none; }
       .slide { scroll-snap-align: none; min-height: auto; padding-top: 3rem; padding-bottom: 3rem; overflow: visible; }
@@ -619,8 +622,8 @@
      ═══════════════════════════════════════════════════════════ -->
 <section class="slide" id="s0">
   <div style="width:100%;max-width:1100px;">
-    <div class="eyebrow r">Auto-MMM · How It Works</div>
-    <h2 class="r" style="margin-top:.5rem;">Point Claude at your data.<br>Get a boardroom-ready MMM report.</h2>
+    <div class="eyebrow r">Auto-MMM · Architecture</div>
+    <h2 class="r" style="margin-top:.5rem;">Architecture</h2>
     <p class="r" style="max-width:60ch;margin-top:.5rem;">Five specialist agents coordinate autonomously — no human involvement between rounds. Each agent has a single role so no agent can both produce and approve its own output.</p>
 
     <div class="intro-grid r">
@@ -710,6 +713,45 @@
         </div>
       </div>
     </div>
+
+    <!-- Knowledge Layer -->
+    <div class="r" style="margin-top:1.8rem; width:100%;">
+      <div class="mr-label" style="margin-bottom:.9rem;">Notion Knowledge Layer</div>
+      <div class="kl-flow" style="display:grid; grid-template-columns:1fr auto 1fr auto 1fr auto 1fr; align-items:center; gap:.6rem;">
+
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.9rem 1.1rem;">
+          <div style="font-size:.72rem; font-family:'IBM Plex Mono',monospace; color:var(--text-3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem;">Notion</div>
+          <div style="font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:.3rem;">3 Databases</div>
+          <div style="font-size:.72rem; color:var(--text-2); line-height:1.6;">Field Definitions<br>Business Context<br>Known Issues</div>
+        </div>
+
+        <div style="font-size:1.1rem; color:var(--text-3);">→</div>
+
+        <div style="background:var(--surface); border:1px solid var(--border-red); border-radius:10px; padding:.9rem 1.1rem;">
+          <div style="font-size:.72rem; font-family:'IBM Plex Mono',monospace; color:var(--text-3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem;">discover.py</div>
+          <div style="font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:.3rem;">Auto-profiling</div>
+          <div style="font-size:.72rem; color:var(--text-2); line-height:1.6;">Detects columns<br>Pulls Notion context<br>Generates config</div>
+        </div>
+
+        <div style="font-size:1.1rem; color:var(--text-3);">→</div>
+
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.9rem 1.1rem;">
+          <div style="font-size:.72rem; font-family:'IBM Plex Mono',monospace; color:var(--text-3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem;">metadata.json</div>
+          <div style="font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:.3rem;">Shared Context</div>
+          <div style="font-size:.72rem; color:var(--text-2); line-height:1.6;">Expected ROI ranges<br>Seasonality notes<br>Data quality flags</div>
+        </div>
+
+        <div style="font-size:1.1rem; color:var(--text-3);">→</div>
+
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.9rem 1.1rem;">
+          <div style="font-size:.72rem; font-family:'IBM Plex Mono',monospace; color:var(--text-3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem;">All 5 Agents</div>
+          <div style="font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:.3rem;">Live Knowledge</div>
+          <div style="font-size:.72rem; color:var(--text-2); line-height:1.6;">No code changes<br>Business teams update<br>Notion directly</div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </section>
 
