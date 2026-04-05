@@ -109,21 +109,25 @@ def _run_numpy_fallback(train_df: pd.DataFrame, test_df: pd.DataFrame, cfg: dict
     ctrl_cols = [c for c in cfg["control_variables"] if c in train_df.columns]
 
     all_cols = feat_cols + ctrl_cols + ["trend"]
-    X_train = np.column_stack([
-        train_df[c].values for c in all_cols if c in train_df.columns
-    ] + [np.ones(len(train_df))])
+    present_cols = [c for c in all_cols if c in train_df.columns]
+
+    X_train = np.column_stack([train_df[c].values for c in present_cols]) if present_cols else np.ones((len(train_df), 1))
+    X_test  = np.column_stack([test_df[c].values  for c in present_cols if c in test_df.columns]) if present_cols else np.ones((len(test_df), 1))
     y_train = train_df["kpi"].values.astype(float)
+    y_test  = test_df["kpi"].values.astype(float)
 
-    X_test = np.column_stack([
-        test_df[c].values for c in all_cols if c in test_df.columns
-    ] + [np.ones(len(test_df))])
-    y_test = test_df["kpi"].values.astype(float)
+    # Enforce a minimum organic baseline so NNLS cannot attribute 100% of revenue
+    # to paid media.  baseline_fraction (default 40%) of mean weekly KPI is reserved
+    # as organic/baseline before NNLS sees the data.
+    baseline_fraction = float(cfg.get("nnls_baseline_fraction", 0.40))
+    baseline_floor = baseline_fraction * float(y_train.mean())
+    y_nnls = np.maximum(y_train - baseline_floor, 0.0)
 
-    # Non-negative least squares — enforces positive channel coefficients
-    coefs, _ = nnls(X_train, y_train)
+    # Non-negative least squares on incremental revenue only
+    coefs, _ = nnls(X_train, y_nnls)
 
-    y_pred_train = X_train @ coefs
-    y_pred_test  = X_test @ coefs
+    y_pred_train = X_train @ coefs + baseline_floor
+    y_pred_test  = X_test  @ coefs + baseline_floor
 
     train_r2   = 1 - np.var(y_train - y_pred_train) / (np.var(y_train) + 1e-10)
     train_mape = _mape(y_train, y_pred_train)
@@ -131,12 +135,14 @@ def _run_numpy_fallback(train_df: pd.DataFrame, test_df: pd.DataFrame, cfg: dict
 
     total_kpi = float(y_train.sum())
     channel_contribs = {}
-    all_feat = [c for c in all_cols if c in train_df.columns] + ["intercept"]
 
-    for i, ch in enumerate(valid_channels):
-        col_idx = all_feat.index(f"{ch}_saturated")
-        contrib = float((coefs[col_idx] * X_train[:, col_idx]).sum())
-        channel_contribs[ch] = contrib
+    for ch in valid_channels:
+        col = f"{ch}_saturated"
+        if col not in present_cols:
+            channel_contribs[ch] = 0.0
+            continue
+        col_idx = present_cols.index(col)
+        channel_contribs[ch] = float((coefs[col_idx] * X_train[:, col_idx]).sum())
 
     roi = {}
     for ch in valid_channels:

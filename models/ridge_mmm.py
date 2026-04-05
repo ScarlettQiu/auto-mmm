@@ -68,18 +68,21 @@ def run(
     coef_mean = boot_coefs.mean(axis=0)
     coef_std  = boot_coefs.std(axis=0)
 
-    # Channel contributions — decompose fitted values
+    # Channel contributions — decompose fitted values in ORIGINAL feature space.
+    # StandardScaler mean-centres features, so coef * X_train_s sums to ~0 for
+    # every channel regardless of true effect.  Convert to original scale first:
+    #   coef_orig[j] = coef_std[j] / scaler.scale_[j]
+    #   contrib(t)   = coef_orig[j] * X_train[t, j]
+    coef_orig = coef_mean / scaler.scale_
     baseline  = model.intercept_
     channel_contribs = {}
-    media_feat_cols = [f"{ch}_saturated" for ch in channels if f"{ch}_saturated" in feat_cols]
 
     for ch in channels:
         col = f"{ch}_saturated"
         if col not in feat_cols:
             continue
         idx = feat_cols.index(col)
-        # Contribution = coef * scaled_feature (unscaled back to original space)
-        contrib = coef_mean[idx] * X_train_s[:, idx]
+        contrib = coef_orig[idx] * X_train[:, idx]
         channel_contribs[ch] = float(contrib.sum())
 
     total_media_contrib = sum(channel_contribs.values())
