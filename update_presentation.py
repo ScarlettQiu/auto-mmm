@@ -171,6 +171,26 @@ def patch_html(html, roi_js, contrib_js, state, fit_df):
         html
     )
 
+    # ── Hero stats (title slide) ───────────────────────────────────────
+    best_mape_all = state.get("best_test_mape", pymc_mape_raw)
+    r1_mape = next((h["best_test_mape"] for h in state.get("history", []) if h["round"] == 1), best_mape_all)
+    reduction_pct = round((1 - best_mape_all / r1_mape) * 100) if r1_mape else 0
+    html = re.sub(
+        r'(<div class="v green">)[0-9.]+%(<\/div><div class="l">Best Test MAPE)',
+        f'\\g<1>{best_mape_all:.1f}%\\2',
+        html
+    )
+    html = re.sub(
+        r'(<div class="v">)\d+(<\/div><div class="l">Rounds Run)',
+        f'\\g<1>{round_n}\\2',
+        html
+    )
+    html = re.sub(
+        r'(<div class="v">)\d+%(<\/div><div class="l">MAPE Reduction)',
+        f'\\g<1>{reduction_pct}%\\2',
+        html
+    )
+
     return html
 
 

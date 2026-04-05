@@ -498,19 +498,96 @@
       margin-bottom: 1rem;
     }
 
-    /* ── Responsive ── */
-    @media (max-width: 800px) {
-      #s2, #s5 { flex-direction: column; }
-      .s2-left, .s5-left { flex: none; width: 100%; }
-      .model-row { grid-template-columns: 1fr; }
-      .mr-pros, .mr-cons, .mr-name, .mr-mape { border-right: none; border-bottom: 1px solid var(--border); }
+    /* ── Responsive — tablet & mobile ── */
+    @media (max-width: 860px) {
+      /* Allow slides taller than viewport to scroll freely */
+      html { scroll-snap-type: none; }
+      .slide { scroll-snap-align: none; min-height: auto; padding-top: 3rem; padding-bottom: 3rem; overflow: visible; }
+      #dots { display: none; }
+      #progress { display: none; }
+
+      /* Title */
+      #s1 { padding: 3.5rem 6vw; }
+      .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2rem; padding-top: 1.5rem; }
+
+      /* Intro */
+      #s0 { padding: 3rem 6vw; }
+      #s0 .intro-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+
+      /* EDA */
+      #seda { padding: 3rem 6vw; }
+      #seda .eda-grid { grid-template-columns: 1fr; }
+
+      /* Dataset */
+      #s2 { flex-direction: column; padding: 3rem 6vw; align-items: stretch; }
+      .s2-left { flex: none; width: 100%; padding: 2.5rem 5vw; border-right: none; border-bottom: 1px solid var(--border); }
+      .s2-right { padding: 2.5rem 5vw; grid-template-columns: 1fr 1fr; }
+
+      /* Models */
+      #s3 { padding: 3rem 6vw; }
+      .model-row { grid-template-columns: 1fr 1fr; }
+      .mr-name { grid-column: 1 / -1; border-right: none; border-bottom: 1px solid var(--border); }
+      .mr-mape { grid-column: 1 / -1; text-align: left; border-right: none; border-top: 1px solid var(--border); }
+      .mr-pros { border-bottom: none; }
+
+      /* Tuning */
+      #s4 { padding: 3rem 6vw; }
+      .timeline { gap: .5rem; }
+      .tl-circle { width: 48px; height: 48px; }
+      .mape-trail { flex-wrap: wrap; gap: .4rem; }
+      .trail-note { width: 100%; margin-left: 0; margin-top: .2rem; }
+
+      /* ROI */
+      #s5 { flex-direction: column; }
+      .s5-left { flex: none; width: 100%; padding: 2.5rem 6vw; }
+      .s5-right { padding: 2.5rem 6vw; }
+      .bar-lbl { width: 120px; }
+
+      /* Contributions */
+      #s7 { padding: 3rem 6vw; }
       #s7 .wrap { grid-template-columns: 1fr; }
+
+      /* Limitations */
       #s8 { flex-direction: column; }
-      .limit-col { border-right: none; border-bottom: 1px solid var(--border); }
-      .triple { gap: 2rem; }
-      #nav-dots { display: none; }
+      .limit-col { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 6vw; }
+      .limit-col:last-child { border-bottom: none; }
+
+      /* Quote */
+      #s6 { padding: 3rem 6vw; }
+      .triple { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+      .triple-divider { display: none; }
+
+      /* Recs */
+      #s9 { padding: 3rem 6vw; }
+      .rec-n { font-size: 2rem; }
     }
-    @media (max-height: 680px) { #dots { display: none; } }
+
+    @media (max-width: 480px) {
+      h1 { font-size: clamp(2.4rem,10vw,3.2rem); }
+      h2 { font-size: clamp(1.4rem,5.5vw,2rem); }
+      .hero-stats { grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; }
+      .why-grid { grid-template-columns: 1fr; }
+      .s2-right { grid-template-columns: 1fr; }
+      .model-row { grid-template-columns: 1fr; }
+      .mr-pros { border-right: none; border-bottom: 1px solid var(--border); }
+      .timeline { flex-direction: column; align-items: flex-start; gap: 0; }
+      .timeline::before { display: none; }
+      .tl-node { flex-direction: row; align-items: flex-start; gap: .8rem; width: 100%; margin-bottom: .8rem; }
+      .tl-circle { flex-shrink: 0; margin-bottom: 0; }
+      .tl-body { text-align: left; padding: .4rem 0 0 0; }
+      .bar-lbl { width: 90px; font-size: .76rem; }
+      .spend-bar-lbl { width: 90px; font-size: .72rem; }
+      .corr-lbl { width: 90px; font-size: .72rem; }
+      .rec-row { grid-template-columns: 50px 1fr; }
+      .rec-n { font-size: 1.6rem; }
+      .triple .n { font-size: 2rem; }
+      #s0 .intro-grid { gap: 1.5rem; }
+      .ap-step { grid-template-columns: 40px 1fr; }
+      .ap-icon { width: 38px; height: 38px; }
+    }
+
+    @media (max-height: 680px) and (min-width: 860px) { #dots { display: none; } }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .r.on { animation-duration: .1s !important; }
@@ -530,10 +607,10 @@
   <h1 class="r" style="margin-top:.8rem;">Auto-<span>MMM</span></h1>
   <p class="r" style="margin-top:.9rem;">Autonomous Marketing Mix Modelling — three independent models,<br>five specialist agents, zero manual tuning.</p>
   <div class="hero-stats r">
-    <div class="hero-stat"><div class="v green">20.4%</div><div class="l">Best Test MAPE</div></div>
-    <div class="hero-stat"><div class="v red">4.0</div><div class="l">Meta Instagram ROI</div></div>
-    <div class="hero-stat"><div class="v">2</div><div class="l">Rounds Run</div></div>
-    <div class="hero-stat"><div class="v">13%</div><div class="l">MAPE Reduction</div></div>
+    <div class="hero-stat"><div class="v green">13.1%</div><div class="l">Best Test MAPE</div></div>
+    <div class="hero-stat"><div class="v red">4.0×</div><div class="l">Meta Instagram ROI</div></div>
+    <div class="hero-stat"><div class="v">3</div><div class="l">Rounds Run</div></div>
+    <div class="hero-stat"><div class="v">43%</div><div class="l">MAPE Reduction</div></div>
   </div>
 </section>
 
