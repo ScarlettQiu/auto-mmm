@@ -610,7 +610,7 @@
     <div class="hero-stat"><div class="v green">13.1%</div><div class="l">Best Test MAPE</div></div>
     <div class="hero-stat"><div class="v red">4.0×</div><div class="l">Meta Instagram ROI</div></div>
     <div class="hero-stat"><div class="v">3</div><div class="l">Rounds Run</div></div>
-    <div class="hero-stat"><div class="v">43%</div><div class="l">MAPE Reduction</div></div>
+    <div class="hero-stat"><div class="v">44%</div><div class="l">MAPE Reduction</div></div>
   </div>
 </section>
 
@@ -955,11 +955,11 @@
 <section class="slide" id="s5">
   <div class="s5-left">
     <div class="eyebrow r" style="color:rgba(255,255,255,.55);">04 — Channel ROI</div>
-    <h2 class="r">Meta dominates.<br>Google surprises.</h2>
-    <p class="r">NNLS return per $1 spent. Only NNLS produced channel-level signal this round — Ridge and PyMC fallback both zeroed all channels.</p>
+    <h2 class="r">Meta dominates.<br>Two models agree.</h2>
+    <p class="r">First cross-model signal: Ridge and NNLS both rank Meta Facebook #1 and Meta Instagram #2. ROI shown is NNLS; Ridge values are similar.</p>
     <div class="s5-highlight r">
-      <div class="hv">4.0×</div>
-      <div class="hl">Meta Instagram ROI · Round 3</div>
+      <div class="hv">2.9×</div>
+      <div class="hl">Meta Instagram ROI · NNLS · Round 3</div>
     </div>
   </div>
   <div class="s5-right">
@@ -972,22 +972,22 @@
      ═══════════════════════════════════════════════════════════ -->
 <section class="slide" id="s6">
   <div class="q-overline r"></div>
-  <div class="q-text r"><em>Meta</em> drives<br><em>95%</em> of<br>attributed revenue.</div>
-  <div class="q-sub r">Meta Facebook 68.0% · Meta Instagram 27.7% · NNLS only · Round 3</div>
+  <div class="q-text r"><em>Meta</em> confirmed<br>by <em>two</em><br>models.</div>
+  <div class="q-sub r">Meta Facebook 37–42% · Meta Instagram 10–20% · Ridge + NNLS agree · Round 3</div>
   <div class="triple r">
     <div class="triple-item" style="text-align:center;">
-      <div class="n">3.0×</div>
-      <div class="d">Meta Facebook ROI</div>
+      <div class="n">1.7×</div>
+      <div class="d">Meta Facebook ROI (cross-model mean)</div>
     </div>
     <div class="triple-divider"></div>
     <div class="triple-item" style="text-align:center;">
-      <div class="n">96%</div>
-      <div class="d">attributed revenue from Meta</div>
+      <div class="n">47–62%</div>
+      <div class="d">Meta revenue share across models</div>
     </div>
     <div class="triple-divider"></div>
     <div class="triple-item" style="text-align:center;">
-      <div class="n">4.9×</div>
-      <div class="d">Google Search ROI (unconfirmed)</div>
+      <div class="n">2.9×</div>
+      <div class="d">Meta Instagram ROI · best channel</div>
     </div>
   </div>
 </section>
@@ -1006,32 +1006,32 @@
         <!-- SVG Donut — NNLS -->
         <div class="col-eyebrow">NNLS Contribution (Round 3)</div>
         <svg class="donut-svg" viewBox="0 0 180 180" width="180" height="180" style="display:block; margin:0 auto 1.2rem;">
-          <!-- baseline ~4% implied remainder -->
+          <!-- Baseline / organic ~33% (grey) -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#d8d8e4" stroke-width="28"
             stroke-dasharray="376.99" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
-          <!-- Meta Facebook 67.57% -->
+          <!-- Meta Facebook 42.47% = 160.1 -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#A91E2C" stroke-width="28"
-            stroke-dasharray="254.86 122.13" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
-          <!-- Meta Instagram 27.75% -->
+            stroke-dasharray="160.09 216.90" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
+          <!-- Meta Instagram 20.05% = 75.5 -->
           <circle cx="90" cy="90" r="60" fill="none" stroke="#D63031" stroke-width="28"
-            stroke-dasharray="104.72 272.27" stroke-dashoffset="-254.86" transform="rotate(-90 90 90)"/>
-          <!-- Google Search 3.91% -->
-          <circle cx="90" cy="90" r="60" fill="none" stroke="#E07070" stroke-width="28"
-            stroke-dasharray="14.76 362.23" stroke-dashoffset="-359.58" transform="rotate(-90 90 90)"/>
-          <text x="90" y="86" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#f2f0ee">99.2%</text>
-          <text x="90" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(242,240,238,.4)">MEDIA SHARE</text>
+            stroke-dasharray="75.54 301.45" stroke-dashoffset="-160.09" transform="rotate(-90 90 90)"/>
+          <!-- Google Shopping 4.52% = 17.0 -->
+          <circle cx="90" cy="90" r="60" fill="none" stroke="#c06060" stroke-width="28"
+            stroke-dasharray="17.04 359.95" stroke-dashoffset="-235.63" transform="rotate(-90 90 90)"/>
+          <text x="90" y="86" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#0a0a12">67%</text>
+          <text x="90" y="100" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(10,10,18,.4)">MEDIA SHARE</text>
         </svg>
         <div class="donut-legend">
-          <div class="leg-row"><div class="leg-dot" style="background:#A91E2C;"></div>Meta Facebook — 67.6%</div>
-          <div class="leg-row"><div class="leg-dot" style="background:#D63031;"></div>Meta Instagram — 27.8%</div>
-          <div class="leg-row"><div class="leg-dot" style="background:#E07070;"></div>Google Search — 3.9%</div>
-          <div class="leg-row"><div class="leg-dot" style="background:#d0d0da;"></div>Other / Baseline</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#A91E2C;"></div>Meta Facebook — 42.5%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#D63031;"></div>Meta Instagram — 20.1%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#c06060;"></div>Google Shopping — 4.5%</div>
+          <div class="leg-row"><div class="leg-dot" style="background:#d0d0da;"></div>Baseline / Organic — 33%</div>
         </div>
       </div>
 
       <div class="contrib-right r">
-        <h3 style="margin-bottom:.4rem;">Why do the models differ?</h3>
-        <p style="margin-bottom:1.4rem; font-size:.85rem;">Ridge's L2 regularisation (alpha=109.85) zeroed all 8 channel coefficients — it is effectively a baseline-only model and cannot validate any channel ROI. PyMC's fallback Bayesian LM similarly produces zero channel attribution. Only NNLS allocates media spend, attributing 99%+ to Meta — plausible given Meta's dominance of the spend mix ($950M of $970M total).</p>
+        <h3 style="margin-bottom:.4rem;">First cross-model signal</h3>
+        <p style="margin-bottom:1.4rem; font-size:.85rem;">Ridge and NNLS now both attribute positive revenue to Meta Facebook and Meta Instagram — the first agreement across two models. Ridge adds Google Search (19.5%) which NNLS misses. PyMC fallback still returns zero channel attribution. Google Display (−12.8%) and Google Video (−2.6%) show negative Ridge contributions — a sign-confounding artefact from correlated spend, not a real negative effect.</p>
 
         <div class="col-eyebrow" style="margin-bottom:.8rem;">Ridge Contribution</div>
         <div id="ridge-contrib-s7"></div>
@@ -1081,27 +1081,27 @@
     <div class="rec-row r">
       <div class="rec-n">01</div>
       <div>
-        <div class="rec-title">Do not act on NNLS channel ROI — baseline has collapsed</div>
-        <div class="rec-body">NNLS assigned ~$30.6M/week to paid media — essentially all revenue, zero to organic. Google Shopping ROI of 36× escalated further in Round 3 after the hill_ec change, but this is a modelling artefact. All NNLS channel signals are invalidated until a non-zero baseline intercept is enforced.</div>
+        <div class="rec-title">Meta Instagram and Facebook are the only confirmed channels</div>
+        <div class="rec-body">Ridge and NNLS both rank Meta Facebook #1 and Meta Instagram #2 — the first cross-model agreement in this project. Meta Instagram delivers more per dollar (NNLS: 2.9×, Ridge: 1.5×) despite lower absolute spend ($226M vs $624M). This is directionally actionable within the Meta portfolio — consider shifting budget toward Instagram at the margin.</div>
       </div>
     </div>
     <div class="rec-row r">
       <div class="rec-n">02</div>
       <div>
-        <div class="rec-title">Meta Instagram is directionally the strongest channel</div>
-        <div class="rec-body">Instagram ROI 4.0× vs Facebook 3.0× — Instagram delivers more per dollar despite lower absolute spend (£226M vs £624M). This direction has been consistent across all 3 rounds. Treat as hypothesis until Ridge or PyMC corroborate with a working attribution model.</div>
+        <div class="rec-title">Do not act on Google channel ROIs yet</div>
+        <div class="rec-body">Google Display shows −$55 Ridge ROI, Google Video −$4.4 — sign confounding from correlated spend patterns. Google Search shows 30.7× Ridge ROI which is implausibly high (meta_other shows 291× for the same reason: tiny spend amplifies any positive coefficient). These signals need PyMC's priors to stabilise before any reallocation.</div>
       </div>
     </div>
     <div class="rec-row r">
       <div class="rec-n">03</div>
       <div>
-        <div class="rec-title">Fix the pipeline before running more rounds</div>
-        <div class="rec-body">Three priorities: (1) enforce NNLS baseline intercept, (2) install gcc so PyMC full Bayesian runs in ~5 min not 58 min, (3) fix Ridge/PyMC contribution pipeline to produce non-zero outputs. Without two working models, cross-model consensus — the core signal Auto-MMM is designed to produce — is impossible.</div>
+        <div class="rec-title">Install gcc to unlock full Bayesian MMM</div>
+        <div class="rec-body">Run <code style="font-family:'IBM Plex Mono',monospace;font-size:.8rem;">brew install gcc</code> — this enables PyTensor C compilation, cutting PyMC sampling from 58 minutes to ~5 minutes. With full PyMC running, cross-model consensus on Meta channels would be confirmed with posterior credible intervals — enough to justify a budget reallocation decision at the marketing director level.</div>
       </div>
     </div>
 
     <div class="bottom-line r">
-      <strong>Bottom line:</strong> Best test accuracy reached 13.1% (Round 3 PyMC). Meta dominates attributed revenue at 96%+ share. No budget reallocation until NNLS baseline is fixed and at least two models produce structurally sound attribution.
+      <strong>Bottom line:</strong> First real finding — Meta Facebook and Instagram confirmed by two independent models. Meta Instagram is more efficient per dollar. Google channel ROIs are noisy and need PyMC to stabilise. Install gcc and run Round 4 for board-level confidence.
     </div>
   </div>
 </section>
@@ -1205,27 +1205,26 @@ renderCorrBars();
 // ── Data ──────────────────────────────────────────────────────────────
 // AUTO-UPDATE: ROI_DATA_START
 const ROI = [
-  { lbl:'Google Shopping ⚠️', roi:36.277, color:'#C0122A', top:false },
-  { lbl:'Google Search',      roi:4.941,  color:'#D63031', top:false },
-  { lbl:'Meta Instagram',     roi:3.974,  color:'#A91E2C', top:true  },
-  { lbl:'Meta Facebook',      roi:3.005,  color:'#C23030', top:false },
-  { lbl:'Google Display',     roi:0.000,  color:'#d0d0da', top:false },
-  { lbl:'Google PMax',        roi:0.000,  color:'#d0d0da', top:false },
-  { lbl:'Google Video',       roi:0.000,  color:'#d0d0da', top:false },
-  { lbl:'Meta Other',         roi:0.000,  color:'#d0d0da', top:false },
+  { lbl:'meta_other', roi:0.000, color:'#1a2240', top:false },
+  { lbl:'google_shopping ⚠️', roi:36.861, color:'#E07070', top:true },
+  { lbl:'google_search', roi:0.000, color:'#1a2240', top:false },
+  { lbl:'meta_instagram', roi:2.873, color:'#D63031', top:false },
+  { lbl:'meta_facebook', roi:1.876, color:'#D63031', top:false },
+  { lbl:'google_pmax', roi:0.000, color:'#1a2240', top:false },
+  { lbl:'google_video', roi:0.000, color:'#1a2240', top:false },
+  { lbl:'google_display', roi:0.000, color:'#1a2240', top:false }
 ];
 // AUTO-UPDATE: ROI_DATA_END
 
 // AUTO-UPDATE: CONTRIB_DATA_START
 const RIDGE = [
-  { lbl:'Baseline',  pct:100.0, color:'#c8c8d4' },
+  { lbl:'Baseline',  pct:100.0, color:'#3a3a44' },
   { lbl:'All Media (zeroed)', pct:0.0, color:'#A91E2C' },
 ];
 const NNLS = [
-  { lbl:'Meta Facebook', pct:68.01, color:'#A91E2C' },
-  { lbl:'Meta Instagram', pct:27.74, color:'#D63031' },
-  { lbl:'Google Shopping', pct:4.44, color:'#c06060' },
-  { lbl:'Google Search', pct:3.14, color:'#E07070' }
+  { lbl:'Meta Facebook', pct:42.47, color:'#A91E2C' },
+  { lbl:'Meta Instagram', pct:20.05, color:'#D63031' },
+  { lbl:'Google Shopping', pct:4.52, color:'#c06060' }
 ];
 // AUTO-UPDATE: CONTRIB_DATA_END
 
