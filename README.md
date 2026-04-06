@@ -111,6 +111,8 @@ export NOTION_TOKEN=ntn_...
 
 ## Data Sources
 
+The demo uses the [Multi-Region MMM Dataset for eCommerce Brands](https://figshare.com/articles/dataset/Multi-Region_Marketing_Mix_Modeling_MMM_Dataset_for_Several_eCommerce_Brands/25314841/3?file=46779652) published on Figshare under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Results are illustrative and not from a real brand.
+
 `prepare.py` supports three data sources via `config.json`:
 
 | Source | Config key | Install |
