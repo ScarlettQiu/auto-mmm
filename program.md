@@ -63,6 +63,23 @@ Skip any step whose output file already exists (`[ -s file ]` pattern).
 
 ---
 
+### Step 1b — Refresh knowledge layer from Notion
+
+Load the Notion token and refresh metadata.json:
+```bash
+export $(grep -v '^#' .env | xargs) 2>/dev/null
+if [ -n "$NOTION_TOKEN" ]; then
+  python discover.py --source csv --path "$(python3 -c "import json; print(json.load(open('config.json'))['data_path'])")" --notion-token "$NOTION_TOKEN"
+  echo "Knowledge layer refreshed from Notion"
+else
+  echo "No NOTION_TOKEN in .env — skipping Notion refresh"
+fi
+```
+
+This runs every round so business context, channel benchmarks, and data issues stay current.
+
+---
+
 ### Step 2 — Data Explorer (Round 1 only)
 
 Check if exploration file exists:

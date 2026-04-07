@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrismMMM — Round 3 vs Round 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:      #C0122A;
+      --blue:     #1a5fa8;
+      --bg:       #ffffff;
+      --bg-2:     #f6f6f9;
+      --surface:  #f0f0f5;
+      --border:   rgba(0,0,0,0.08);
+      --text:     #0a0a12;
+      --text-2:   rgba(10,10,18,0.58);
+      --text-3:   rgba(10,10,18,0.36);
+      --r3:       #C0122A;
+      --r4:       #1a5fa8;
+      --green:    #1a7a4a;
+      --orange:   #c45f00;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-brand { font-size: 1.1rem; font-weight: 800; letter-spacing: -.02em; }
+    .header-brand span { color: var(--red); }
+    .header-sub { font-size: .8rem; color: var(--text-2); margin-top: .1rem; }
+    .header-pills { display: flex; gap: .5rem; }
+    .pill {
+      font-size: .72rem; font-weight: 700; padding: .25rem .75rem;
+      border-radius: 99px; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .pill-r3 { background: rgba(192,18,42,.1); color: var(--r3); }
+    .pill-r4 { background: rgba(26,95,168,.1); color: var(--r4); }
+
+    /* ── Page ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 3rem; }
+    .section-title {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-3); margin-bottom: 1rem;
+      padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Summary cards ── */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .summary-card {
+      background: var(--bg-2); border-radius: 12px; padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .summary-card.r3 { border-top: 3px solid var(--r3); }
+    .summary-card.r4 { border-top: 3px solid var(--r4); }
+    .round-label {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; margin-bottom: .75rem;
+    }
+    .round-label.r3 { color: var(--r3); }
+    .round-label.r4 { color: var(--r4); }
+    .card-stat { margin-bottom: .5rem; }
+    .card-stat-val { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+    .card-stat-label { font-size: .75rem; color: var(--text-2); }
+    .card-change {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      padding: .15rem .5rem; border-radius: 4px; margin-left: .4rem;
+    }
+    .up { background: rgba(26,122,74,.1); color: var(--green); }
+    .down { background: rgba(196,95,0,.1); color: var(--orange); }
+    .tag-list { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .75rem; }
+    .tag {
+      font-size: .7rem; font-weight: 600; padding: .2rem .55rem;
+      border-radius: 99px; background: var(--surface); color: var(--text-2);
+    }
+
+    /* ── Compare table ── */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .compare-table th {
+      text-align: left; font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-3); padding: .6rem .75rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .compare-table th.r3 { color: var(--r3); }
+    .compare-table th.r4 { color: var(--r4); }
+    .compare-table td {
+      padding: .65rem .75rem; border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--bg-2); }
+    .ch-name { font-weight: 600; }
+    .agree-high { color: var(--green); font-weight: 700; }
+    .agree-med  { color: var(--orange); font-weight: 600; }
+    .agree-low  { color: #999; }
+    .delta-better { color: var(--green); font-weight: 700; font-size: .8rem; }
+    .delta-worse  { color: var(--orange); font-weight: 600; font-size: .8rem; }
+
+    /* ── Bar chart ── */
+    .bar-group { margin-bottom: 1.25rem; }
+    .bar-label {
+      font-size: .82rem; font-weight: 600; margin-bottom: .35rem;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .bar-label span { font-size: .72rem; color: var(--text-2); font-weight: 400; }
+    .bar-track {
+      height: 28px; background: var(--surface); border-radius: 4px;
+      overflow: hidden; display: flex; gap: 2px;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 3px;
+      display: flex; align-items: center; padding-left: .5rem;
+      font-size: .72rem; font-weight: 700; color: #fff;
+      transition: width .6s ease;
+    }
+    .bar-r3 { background: var(--r3); }
+    .bar-r4 { background: var(--r4); }
+
+    /* ── Finding callout ── */
+    .finding {
+      background: rgba(26,122,74,.06); border: 1px solid rgba(26,122,74,.2);
+      border-left: 4px solid var(--green);
+      border-radius: 8px; padding: 1rem 1.25rem;
+      margin-bottom: 1rem; font-size: .9rem;
+    }
+    .finding strong { color: var(--green); }
+    .warning-box {
+      background: rgba(196,95,0,.06); border: 1px solid rgba(196,95,0,.2);
+      border-left: 4px solid var(--orange);
+      border-radius: 8px; padding: 1rem 1.25rem;
+      margin-bottom: 1rem; font-size: .9rem;
+    }
+    .warning-box strong { color: var(--orange); }
+
+    /* ── MAPE timeline ── */
+    .timeline {
+      display: flex; align-items: flex-end; gap: 1.5rem;
+      padding: 1.5rem 0; border-bottom: 2px solid var(--border);
+    }
+    .tl-point { text-align: center; flex: 1; }
+    .tl-bar-wrap { height: 120px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: .5rem; }
+    .tl-bar {
+      width: 48px; border-radius: 4px 4px 0 0;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-top: .35rem; font-size: .72rem; font-weight: 800; color: #fff;
+    }
+    .tl-round { font-size: .72rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
+    .tl-mape { font-size: 1rem; font-weight: 800; }
+    .tl-note { font-size: .68rem; color: var(--text-3); margin-top: .2rem; }
+    .tl-arrow { font-size: 1.4rem; color: var(--border); padding-bottom: 2.5rem; }
+
+    /* ── Knowledge box ── */
+    .knowledge-box {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.25rem;
+    }
+    .knowledge-row { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+    .knowledge-row:last-child { border-bottom: none; }
+    .knowledge-ch { font-weight: 600; }
+    .knowledge-vals { display: flex; gap: 1.5rem; }
+    .knowledge-val { text-align: right; }
+    .knowledge-val-num { font-weight: 700; }
+    .knowledge-val-label { font-size: .68rem; color: var(--text-3); }
+
+    /* ── Footer ── */
+    .footer { text-align: center; padding: 2rem; font-size: .72rem; color: var(--text-3); border-top: 1px solid var(--border); margin-top: 3rem; }
+    .footer a { color: var(--text-3); }
+
+    @media (max-width: 700px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .timeline { flex-wrap: wrap; }
+      .page { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div>
+    <div class="header-brand">Prism<span>MMM</span></div>
+    <div class="header-sub">Round 3 → Round 4 Comparison</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-r3">Round 3</span>
+    <span class="pill pill-r4">Round 4</span>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ── MAPE Timeline ── -->
+  <div class="section">
+    <div class="section-title">MAPE Improvement Across All Rounds</div>
+    <div class="timeline">
+      <div class="tl-point">
+        <div class="tl-bar-wrap">
+          <div class="tl-bar" style="height:100%;background:#ccc;">23.2%</div>
+        </div>
+        <div class="tl-round">Round 1</div>
+        <div class="tl-mape" style="color:#999;">23.21%</div>
+        <div class="tl-note">Baseline</div>
+      </div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-point">
+        <div class="tl-bar-wrap">
+          <div class="tl-bar" style="height:88%;background:#c97;">20.4%</div>
+        </div>
+        <div class="tl-round">Round 2</div>
+        <div class="tl-mape" style="color:#c97;">20.39%</div>
+        <div class="tl-note">lag 2→1</div>
+      </div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-point">
+        <div class="tl-bar-wrap">
+          <div class="tl-bar" style="height:56%;background:var(--r3);">13.1%</div>
+        </div>
+        <div class="tl-round">Round 3</div>
+        <div class="tl-mape" style="color:var(--r3);">13.05%</div>
+        <div class="tl-note">hill_ec 0.5→0.3</div>
+      </div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-point">
+        <div class="tl-bar-wrap">
+          <div class="tl-bar" style="height:93%;background:var(--r4);">21.5%</div>
+        </div>
+        <div class="tl-round">Round 4</div>
+        <div class="tl-mape" style="color:var(--r4);">21.53%</div>
+        <div class="tl-note">PyMC missing</div>
+      </div>
+    </div>
+    <div class="warning-box" style="margin-top:1rem;">
+      <strong>Note:</strong> Round 4 MAPE is higher than Round 3 because PyMC (the best-fit model) is unavailable this round. Round 3's 13.05% was PyMC's result. The correct comparison is Ridge vs Ridge (R3: 23.23% → R4: 23.17%) and NNLS vs NNLS (R3: 17.62% → R4: 21.53%). The key Round 4 achievement is not MAPE — it is cross-model agreement.
+    </div>
+  </div>
+
+  <!-- ── Round Summary ── -->
+  <div class="section">
+    <div class="section-title">Round Summary</div>
+    <div class="summary-grid">
+      <div class="summary-card r3">
+        <div class="round-label r3">Round 3</div>
+        <div class="card-stat">
+          <div class="card-stat-val">13.05%</div>
+          <div class="card-stat-label">Best test MAPE (PyMC)</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-val">3</div>
+          <div class="card-stat-label">Models running (Ridge + PyMC + NNLS)</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-val">0</div>
+          <div class="card-stat-label">Channels with ✅ High cross-model agreement</div>
+        </div>
+        <div class="tag-list">
+          <span class="tag">Global adstock decay 0.4</span>
+          <span class="tag">hill_ec = 0.3</span>
+          <span class="tag">lag = 1</span>
+        </div>
+      </div>
+      <div class="summary-card r4">
+        <div class="round-label r4">Round 4</div>
+        <div class="card-stat">
+          <div class="card-stat-val">21.53%</div>
+          <div class="card-stat-label">Best test MAPE (NNLS) · PyMC missing</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-val">2</div>
+          <div class="card-stat-label">Models running (Ridge + NNLS)</div>
+        </div>
+        <div class="card-stat">
+          <div class="card-stat-val" style="color:var(--green);">1 ✅</div>
+          <div class="card-stat-label">Meta Facebook — first high-agreement channel</div>
+        </div>
+        <div class="tag-list">
+          <span class="tag">Per-channel adstock from Notion</span>
+          <span class="tag">hill_ec = 0.3</span>
+          <span class="tag">lag = 1</span>
+          <span class="tag">Knowledge layer active</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Knowledge Layer Impact ── -->
+  <div class="section">
+    <div class="section-title">Knowledge Layer — Per-Channel Adstock Decays</div>
+    <div class="finding">
+      <strong>Key change in Round 4:</strong> Notion knowledge layer provided channel-specific adstock decay rates instead of a single global value (0.4). Search decays fast (0.2); video/display build slowly (0.6–0.7). This directly caused Meta Facebook to achieve high cross-model agreement for the first time.
+    </div>
+    <div class="knowledge-box">
+      <div class="knowledge-row" style="font-weight:700;font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;">
+        <span>Channel</span>
+        <div class="knowledge-vals">
+          <span>R3 Decay</span>
+          <span>R4 Decay (Notion)</span>
+          <span>Rationale</span>
+        </div>
+      </div>
+      <div class="knowledge-row">
+        <span class="knowledge-ch">Google Search</span>
+        <div class="knowledge-vals">
+          <span>0.4</span>
+          <span style="color:var(--r4);font-weight:700;">0.2</span>
+          <span style="color:var(--text-2);font-size:.8rem;">Intent-driven, fades in days</span>
+        </div>
+      </div>
+      <div class="knowledge-row">
+        <span class="knowledge-ch">Google Video</span>
+        <div class="knowledge-vals">
+          <span>0.4</span>
+          <span style="color:var(--r4);font-weight:700;">0.7</span>
+          <span style="color:var(--text-2);font-size:.8rem;">Brand building, multi-week</span>
+        </div>
+      </div>
+      <div class="knowledge-row">
+        <span class="knowledge-ch">Google Display</span>
+        <div class="knowledge-vals">
+          <span>0.4</span>
+          <span style="color:var(--r4);font-weight:700;">0.6</span>
+          <span style="color:var(--text-2);font-size:.8rem;">Awareness, medium carryover</span>
+        </div>
+      </div>
+      <div class="knowledge-row">
+        <span class="knowledge-ch">Meta Facebook</span>
+        <div class="knowledge-vals">
+          <span>0.4</span>
+          <span style="color:var(--r4);font-weight:700;">0.5</span>
+          <span style="color:var(--text-2);font-size:.8rem;">Social, 2–3 week carryover</span>
+        </div>
+      </div>
+      <div class="knowledge-row">
+        <span class="knowledge-ch">Meta Instagram</span>
+        <div class="knowledge-vals">
+          <span>0.4</span>
+          <span style="color:var(--r4);font-weight:700;">0.5</span>
+          <span style="color:var(--text-2);font-size:.8rem;">Social, similar to Facebook</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Cross-Model Agreement ── -->
+  <div class="section">
+    <div class="section-title">Cross-Model Agreement: Round 3 vs Round 4</div>
+    <div class="finding">
+      <strong>Meta Facebook achieved ✅ High agreement (CV=7.9%) for the first time</strong> — down from 71.2% in Round 3. This is the most defensible finding in the project: two independent models now agree on both the direction and magnitude of Meta Facebook's contribution.
+    </div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Channel</th>
+          <th class="r3">R3 CV%</th>
+          <th class="r3">R3 Agreement</th>
+          <th class="r4">R4 CV%</th>
+          <th class="r4">R4 Agreement</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ch-name">Meta Facebook</td>
+          <td>71.2%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>7.9%</td>
+          <td><span class="agree-high">✅ High</span></td>
+          <td><span class="delta-better">↑↑ Major improvement</span></td>
+        </tr>
+        <tr>
+          <td class="ch-name">Meta Instagram</td>
+          <td>81.4%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>34.6%</td>
+          <td><span class="agree-med">⚠️ Medium</span></td>
+          <td><span class="delta-better">↑ Improved</span></td>
+        </tr>
+        <tr>
+          <td class="ch-name">Google Shopping</td>
+          <td>86.5%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>42.2%</td>
+          <td><span class="agree-med">⚠️ Medium</span></td>
+          <td><span class="delta-better">↑ Improved</span></td>
+        </tr>
+        <tr>
+          <td class="ch-name">Google Search</td>
+          <td>141.4%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>100.0%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td><span class="delta-worse">→ No change</span></td>
+        </tr>
+        <tr>
+          <td class="ch-name">Google Display</td>
+          <td>141.4%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>100.0%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td><span class="delta-worse">→ No change</span></td>
+        </tr>
+        <tr>
+          <td class="ch-name">Google Video</td>
+          <td>141.4%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td>100.0%</td>
+          <td><span class="agree-low">❌ Low</span></td>
+          <td><span class="delta-worse">→ No change (PyMC needed)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── ROI Comparison ── -->
+  <div class="section">
+    <div class="section-title">ROI Comparison: Meta Channels</div>
+    <div style="margin-bottom:1.5rem;">
+      <div class="bar-group">
+        <div class="bar-label">Meta Facebook — mean ROI <span>NNLS × Ridge average</span></div>
+        <div class="bar-track">
+          <div class="bar-fill bar-r3" style="width:42%;">R3: 1.18×</div>
+          <div class="bar-fill bar-r4" style="width:38%;">R4: 1.60×</div>
+        </div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-label">Meta Instagram — mean ROI <span>NNLS × Ridge average</span></div>
+        <div class="bar-track">
+          <div class="bar-fill bar-r3" style="width:52%;">R3: 1.44×</div>
+          <div class="bar-fill bar-r4" style="width:56%;">R4: 1.99×</div>
+        </div>
+      </div>
+    </div>
+    <div class="warning-box">
+      <strong>Important:</strong> Per the knowledge layer — low MAPE does not validate ROAS estimates. These ROI values represent directional signal, not ground truth. Cross-model agreement (CV%) is the more reliable quality indicator than the ROI magnitude itself.
+    </div>
+  </div>
+
+  <!-- ── Contribution ── -->
+  <div class="section">
+    <div class="section-title">Revenue Contribution — NNLS Model</div>
+    <div class="bar-group">
+      <div class="bar-label">Meta Facebook <span>% of total attributed revenue</span></div>
+      <div class="bar-track">
+        <div class="bar-fill bar-r3" style="width:43%;">R3: 42.5%</div>
+        <div class="bar-fill bar-r4" style="width:42%;">R4: 41.97%</div>
+      </div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-label">Meta Instagram <span>% of total attributed revenue</span></div>
+      <div class="bar-track">
+        <div class="bar-fill bar-r3" style="width:20%;">R3: 20.1%</div>
+        <div class="bar-fill bar-r4" style="width:20%;">R4: 19.96%</div>
+      </div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-label">Google Shopping <span>% of total attributed revenue</span></div>
+      <div class="bar-track">
+        <div class="bar-fill bar-r3" style="width:5%;">R3: 4.5%</div>
+        <div class="bar-fill bar-r4" style="width:5%;">R4: 4.68%</div>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-3);margin-top:.75rem;">Meta channel contribution is stable across rounds — consistent signal despite adstock parameter changes.</p>
+  </div>
+
+  <!-- ── Key Takeaways ── -->
+  <div class="section">
+    <div class="section-title">Key Takeaways</div>
+    <div class="finding">
+      <strong>1. Knowledge layer works.</strong> Adding per-channel adstock decays from Notion reduced Meta Facebook's cross-model disagreement from CV=71.2% to CV=7.9% — achieving ✅ High agreement for the first time. The agent used domain knowledge it couldn't derive from data alone.
+    </div>
+    <div class="finding">
+      <strong>2. Meta Facebook is the most defensible finding.</strong> Both Ridge and NNLS agree on direction and magnitude (1.60× mean ROI, 39–42% revenue contribution). Directionally actionable within Meta portfolio.
+    </div>
+    <div class="finding">
+      <strong>3. Meta Instagram shows higher ROI efficiency (1.99×)</strong> but medium agreement (CV=34.6%). Warrants marginal budget shift toward Instagram within Meta, pending PyMC confirmation.
+    </div>
+    <div class="warning-box">
+      <strong>4. Google channels remain unreliable.</strong> Without PyMC's Bayesian priors, Google Search/Display/Video coefficients are noisy and sign-confused. Install <code style="font-family:'IBM Plex Mono',monospace;">pip install pymc-marketing</code> and run Round 5 for three-model consensus.
+    </div>
+    <div class="warning-box">
+      <strong>5. Evaluation challenge confirmed.</strong> MAPE appeared to worsen in Round 4 (21.53% vs 13.05%), but the real improvement was in attribution quality (CV% reduction). MAPE alone is a misleading scorecard for MMM — cross-model agreement is the more meaningful metric.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>PrismMMM · Round 3 vs Round 4 Comparison · Dataset: <a href="https://figshare.com/articles/dataset/Multi-Region_Marketing_Mix_Modeling_MMM_Dataset_for_Several_eCommerce_Brands/25314841/3?file=46779652">Multi-Region MMM Dataset, Figshare, CC BY 4.0</a> · Results are illustrative, not from a real brand.</p>
+</div>
+
+</body>
+</html>

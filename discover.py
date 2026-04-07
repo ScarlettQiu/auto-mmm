@@ -499,6 +499,16 @@ def main():
                         help="Notion integration token — fetches knowledge layer from Notion")
     args = parser.parse_args()
 
+    # Auto-load token from .env if not passed explicitly
+    if not args.notion_token:
+        env_path = Path(".env")
+        if env_path.exists():
+            for line in env_path.read_text().splitlines():
+                line = line.strip()
+                if line.startswith("NOTION_TOKEN=") and not line.startswith("#"):
+                    args.notion_token = line.split("=", 1)[1].strip()
+                    break
+
     df = load_source(args)
 
     source_info: dict = {"source": args.source}

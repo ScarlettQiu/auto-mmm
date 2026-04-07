@@ -25,7 +25,7 @@ MODEL_REGISTRY = {
 
 
 def run_all(cfg: dict, model_names: list[str], round_num: int) -> dict:
-    df = preprocess(cfg)
+    df = preprocess(cfg, adstock_decays=cfg.get("channel_adstock_decays", {}))
     summary(df, cfg)
 
     holdout = cfg.get("holdout_periods", 2)
