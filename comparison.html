@@ -246,12 +246,12 @@
           <div class="tl-bar" style="height:93%;background:var(--r4);">21.5%</div>
         </div>
         <div class="tl-round">Round 4</div>
-        <div class="tl-mape" style="color:var(--r4);">21.53%</div>
-        <div class="tl-note">PyMC missing</div>
+        <div class="tl-mape" style="color:var(--r4);">13.12%</div>
+        <div class="tl-note">per-channel adstock</div>
       </div>
     </div>
     <div class="warning-box" style="margin-top:1rem;">
-      <strong>Note:</strong> Round 4 MAPE is higher than Round 3 because PyMC (the best-fit model) is unavailable this round. Round 3's 13.05% was PyMC's result. The correct comparison is Ridge vs Ridge (R3: 23.23% → R4: 23.17%) and NNLS vs NNLS (R3: 17.62% → R4: 21.53%). The key Round 4 achievement is not MAPE — it is cross-model agreement.
+      <strong>Note:</strong> Round 4 PyMC ran as a fallback Bayesian LM (13.12% MAPE — consistent with Round 3's 13.05%). The full DelayedSaturatedMMM timed out without a C-compiler (gcc). The fallback does not compute per-channel contributions, so the 3-model CV% is inflated by PyMC zeros. The key Round 4 achievement is Ridge vs NNLS agreement on Meta Facebook (CV 71% → 7.9%), driven by the Notion knowledge layer.
     </div>
   </div>
 
@@ -282,12 +282,12 @@
       <div class="summary-card r4">
         <div class="round-label r4">Round 4</div>
         <div class="card-stat">
-          <div class="card-stat-val">21.53%</div>
-          <div class="card-stat-label">Best test MAPE (NNLS) · PyMC missing</div>
+          <div class="card-stat-val">13.12%</div>
+          <div class="card-stat-label">Best test MAPE (PyMC fallback)</div>
         </div>
         <div class="card-stat">
-          <div class="card-stat-val">2</div>
-          <div class="card-stat-label">Models running (Ridge + NNLS)</div>
+          <div class="card-stat-val">3</div>
+          <div class="card-stat-label">Models running (Ridge + PyMC fallback + NNLS)</div>
         </div>
         <div class="card-stat">
           <div class="card-stat-val" style="color:var(--green);">1 ✅</div>
@@ -498,7 +498,7 @@
       <strong>4. Google channels remain unreliable.</strong> Without PyMC's Bayesian priors, Google Search/Display/Video coefficients are noisy and sign-confused. Install <code style="font-family:'IBM Plex Mono',monospace;">pip install pymc-marketing</code> and run Round 5 for three-model consensus.
     </div>
     <div class="warning-box">
-      <strong>5. Evaluation challenge confirmed.</strong> MAPE appeared to worsen in Round 4 (21.53% vs 13.05%), but the real improvement was in attribution quality (CV% reduction). MAPE alone is a misleading scorecard for MMM — cross-model agreement is the more meaningful metric.
+      <strong>5. Evaluation challenge confirmed.</strong> PyMC fallback MAPE held at 13.12% (vs 13.05% in R3) — MAPE is stable. But PyMC fallback returns zero channel contributions, inflating CV%. The real improvement is Ridge vs NNLS agreement on Meta Facebook (CV 71% → 7.9%). MAPE alone is a misleading scorecard for MMM attribution quality.
     </div>
   </div>
 
