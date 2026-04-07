@@ -1,6 +1,6 @@
 # PrismMMM
 
-**[→ Live Report](https://scarlettqiu.github.io/prismmmm/presentation.html)** · **[→ Dashboard](https://prismmmm-noavdwqyyxace4wktru2m8.streamlit.app/)**
+**[→ Live Report](https://scarlettqiu.github.io/prismmmm/presentation.html)** · **[→ R3 vs R4 Comparison](https://scarlettqiu.github.io/prismmmm/comparison.html)** · **[→ Dashboard](https://prismmmm-noavdwqyyxace4wktru2m8.streamlit.app/)**
 
 Autonomous Marketing Mix Modeling powered by Claude. Point an AI agent at `program.md` and it runs **three independent MMM models**, critiques its own analysis through a five-agent loop, iterates on model configuration, and produces a stakeholder report — without human involvement.
 
@@ -210,6 +210,39 @@ python discover.py --source bigquery \
   --project my-gcp-project \
   --notion-token $NOTION_TOKEN
 ```
+
+---
+
+## What Four Rounds Revealed
+
+Each round the agent tried one config change and the Critic evaluated whether the results were trustworthy. Here is what happened:
+
+| Round | Change | Best MAPE | Key Finding |
+|---|---|---|---|
+| 1 | Baseline | 23.21% | Data Explorer flagged 5 KPI anomalies, 76% zero-spend on Google Shopping |
+| 2 | `adstock_max_lag` 2 → 1 | 20.39% | Short lag better for digital channels — MAPE improved 2.8pp |
+| 3 | `hill_ec` 0.5 → 0.3 | 13.05% | Lower saturation threshold unlocked attribution — MAPE improved 7.3pp |
+| 4 | Per-channel adstock decays (from Notion) | 13.12% | **Meta Facebook achieved ✅ High cross-model agreement (CV 71% → 7.9%)** for the first time |
+
+### Why Round 4 mattered
+
+Rounds 1–3 used a single global adstock decay of 0.4 for all channels. But paid search decays in days (intent-driven), while video builds brand awareness over weeks. Applying a uniform decay rate misrepresents how different media types carry over — and the models can't figure this out from data alone.
+
+Round 4 connected a **Notion knowledge layer** via MCP. Business context was added to Notion (per-channel decay benchmarks, purchase cycle, seasonality) and `discover.py` pulled it into `metadata.json` automatically at the start of the round. The Tuner then applied the domain-informed decay rates:
+
+```json
+"channel_adstock_decays": {
+  "google_search":   0.2,   ← intent-driven, decays in days
+  "google_video":    0.7,   ← brand building, multi-week carryover
+  "google_display":  0.6,   ← awareness, medium carryover
+  "meta_facebook":   0.5,   ← social, 2–3 week carryover
+  "meta_instagram":  0.5
+}
+```
+
+Result: Meta Facebook's cross-model disagreement dropped from CV=71% to CV=7.9% — the first channel to reach ✅ High agreement across models. This is domain knowledge the model could not derive from 132 rows of data on its own.
+
+**See the full comparison:** [Round 3 vs Round 4](https://scarlettqiu.github.io/prismmmm/comparison.html)
 
 ---
 
