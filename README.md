@@ -21,11 +21,15 @@ The five specialist agents keep roles separated so no single agent can both prod
 ## Architecture
 
 ```
-discover.py  ←→  Notion knowledge layer (field definitions, business context, known issues)
-     ↓
-metadata.json + config.json
-     ↓
-ORCHESTRATOR (program.md)
+Notion knowledge layer (field definitions, business context, per-channel benchmarks)
+     ↑↓ every round (discover.py --no-overwrite-config)
+metadata.json          config.json  ← written once by discover.py, then owned by Tuner
+     ↓                      ↓
+ORCHESTRATOR (program.md)  ← reads state.json, coordinates all agents
+        │
+        ├── [every round] discover.py
+        │       Pulls latest Notion knowledge into metadata.json.
+        │       Does NOT overwrite config.json (Tuner owns that).
         │
         ├── DATA EXPLORER (agents/data_explorer.md)  ← Round 1 only
         │       EDA on raw dataset: overview, KPI distribution, channel spend,
@@ -33,8 +37,9 @@ ORCHESTRATOR (program.md)
         │       Returns: EXPLORATION_DONE
         │
         ├── TUNER (agents/tuner.md)                  ← Round 2+ only
-        │       Reads prior round fit metrics, proposes one config change
-        │       (adstock decay, Hill slope, PyMC samples). Edits config.json.
+        │       Reads prior round fit metrics + metadata.json (Notion knowledge).
+        │       Proposes one config change per round — adstock decay, Hill slope,
+        │       or PyMC samples. Edits config.json directly.
         │       Returns: CONFIG_UPDATED or NO_CHANGE
         │
         ├── run_models.py
@@ -46,7 +51,7 @@ ORCHESTRATOR (program.md)
         │       Saves results/latest.json + rounds/R{N}_results.json
         │
         ├── ANALYST (agents/analyst.md)
-        │       Reads model output + EDA report, writes business narrative.
+        │       Reads model output + EDA report + metadata.json (business context).
         │       Covers ROI rankings, model agreement/disagreement, contribution %,
         │       and what the data can and cannot support.
         │       Returns: ANALYSIS_DONE
