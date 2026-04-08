@@ -15,6 +15,7 @@ Read `state.json` first to find the current round. Increment it. That is round N
 | Analyst | `agents/analyst.md` | After models run | `ANALYSIS_DONE: path` |
 | Critic | `agents/critic.md` | After Analyst | `APPROVED` or `REVISE: reason` |
 | Reporter | `agents/reporter.md` | After Critic APPROVED | `REPORT_DONE: paths` |
+| Proofreader | `agents/proofreader.md` | After Reporter | `PROOFREAD_CLEAN` or `PROOFREAD_CORRECTED` |
 
 Spawn each agent with `SendMessage`, passing the round number and relevant file paths. Wait for their exact return string before proceeding.
 
@@ -30,17 +31,18 @@ Round 1:
   → Analyst        (reads exploration report + model results)
   → Critic
     → if REVISE: Analyst revises once, Critic re-reviews
-    → if APPROVED: Reporter
+    → if APPROVED: Reporter → Proofreader
   → Done
 
 Round 2+:
   [SKIP Data Explorer — already run]
+  → Notion refresh (discover.py --no-overwrite-config)
   → Tuner (reads prior round results, may update config.json)
   → Run models (with updated config)
   → Analyst
   → Critic
     → if REVISE: Analyst revises once, Critic re-reviews
-    → if APPROVED: Reporter
+    → if APPROVED: Reporter → Proofreader
   → Done
 ```
 
@@ -179,6 +181,22 @@ Wait for `REPORT_DONE: results/report.md + results/report.pptx`.
 
 ---
 
+### Step 7b — Proofreader
+
+Check if proofread file exists:
+```bash
+[ -s rounds/R{N:02d}_proofread.md ] && echo "EXISTS" || echo "NEEDED"
+```
+
+If NEEDED, spawn the Proofreader:
+> "Read agents/proofreader.md. You are the Proofreader for round N. Read results/report.md, results/roi_comparison.csv, results/model_fit.csv, and rounds/R{N:02d}_review.md. Run all five checks. Fix any errors directly in results/report.md. Write rounds/R{N:02d}_proofread.md. Follow agents/proofreader.md exactly."
+
+Wait for `PROOFREAD_CLEAN: results/report.md` or `PROOFREAD_CORRECTED: results/report.md`.
+
+If CORRECTED: re-run `python report_builder.py` to regenerate the PowerPoint with the corrected report.md.
+
+---
+
 ### Step 8 — Wrap up
 
 Confirm all outputs exist:
@@ -195,6 +213,7 @@ Round N complete.
   Analyst:       rounds/R{N:02d}_analysis.md
   Critic:        [APPROVED / APPROVED after revision]
   Reporter:      results/report.md + results/report.pptx
+  Proofreader:   [CLEAN / CORRECTED]
 ```
 
 The round is done. Ask the user: "Run another round? (y/n)"

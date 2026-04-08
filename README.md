@@ -15,6 +15,7 @@ The five specialist agents keep roles separated so no single agent can both prod
 | **Analyst** | Interprets ROI, contributions, and model agreement into a business narrative | `rounds/R{N}_analysis.md` |
 | **Critic** | Runs 6 quality checks — overfitting, sign correctness, plausibility, consensus honesty, collinearity, sample size | `APPROVED` or `REVISE` |
 | **Reporter** | Rewrites the approved analysis in plain English for a CMO audience, generates deck | `report.md` + `report.pptx` |
+| **Proofreader** | Final check — number accuracy, uncertainty language, jargon, consistency, omissions. Edits report directly if needed | `PROOFREAD_CLEAN` or `PROOFREAD_CORRECTED` |
 
 ---
 
@@ -68,12 +69,19 @@ ORCHESTRATOR (program.md)  ← reads state.json, coordinates all agents
         │       On REVISE: Analyst fixes once, Critic re-reviews. Max one cycle.
         │       Returns: APPROVED or REVISE: <reason>
         │
-        └── REPORTER (agents/reporter.md)
-                Only runs after APPROVED. Rewrites findings in plain English —
-                no jargon, no model names in the headline, no unexplained CIs.
-                Audience: marketing director or CMO.
-                Runs report_builder.py → report.md + report.pptx
-                Returns: REPORT_DONE
+        ├── REPORTER (agents/reporter.md)
+        │       Only runs after APPROVED. Rewrites findings in plain English —
+        │       no jargon, no model names in the headline, no unexplained CIs.
+        │       Audience: marketing director or CMO.
+        │       Runs report_builder.py → report.md + report.pptx
+        │       Returns: REPORT_DONE
+        │
+        └── PROOFREADER (agents/proofreader.md)
+                Final gate before delivery. Checks number accuracy, uncertainty
+                language, jargon, consistency, and omissions against the raw
+                results CSVs. Edits report.md directly if corrections needed.
+                Re-runs report_builder.py if corrected.
+                Returns: PROOFREAD_CLEAN or PROOFREAD_CORRECTED
 ```
 
 **Flow each round:**
