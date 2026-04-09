@@ -12,6 +12,7 @@ Read `state.json` first to find the current round. Increment it. That is round N
 |---|---|---|---|
 | Data Explorer | `agents/data_explorer.md` | Round 1 only (once per dataset) | `EXPLORATION_DONE: path` |
 | Tuner | `agents/tuner.md` | Start of each round (skip round 1) | `CONFIG_UPDATED` or `NO_CHANGE` |
+| Codex Reviewer | `codex_review.py` | After Tuner, before models (optional) | `REVIEW_PASS`, `REVIEW_FAIL`, or `REVIEW_SKIPPED` |
 | Analyst | `agents/analyst.md` | After models run | `ANALYSIS_DONE: path` |
 | Critic | `agents/critic.md` | After Analyst | `APPROVED` or `REVISE: reason` |
 | Reporter | `agents/reporter.md` | After Critic APPROVED | `REPORT_DONE: paths` |
@@ -27,6 +28,7 @@ Spawn each agent with `SendMessage`, passing the round number and relevant file 
 Round 1:
   → Data Explorer  (EDA on raw data, writes exploration report)
   [SKIP Tuner — no prior results yet]
+  → Codex Reviewer (optional — skipped if no OPENAI_API_KEY)
   → Run models
   → Analyst        (reads exploration report + model results)
   → Critic
@@ -38,6 +40,7 @@ Round 2+:
   [SKIP Data Explorer — already run]
   → Notion refresh (discover.py --no-overwrite-config)
   → Tuner (reads prior round results, may update config.json)
+  → Codex Reviewer (optional — skipped if no OPENAI_API_KEY)
   → Run models (with updated config)
   → Analyst
   → Critic
@@ -112,6 +115,25 @@ If NEEDED, spawn the Tuner agent:
 > "Read agents/tuner.md. You are running for round N. Read results/model_fit.csv, results/roi_comparison.csv, config.json, and state.json. Propose and apply one config change if warranted. Follow the instructions in agents/tuner.md exactly."
 
 Wait for `CONFIG_UPDATED` or `NO_CHANGE`.
+
+---
+
+### Step 3b — Codex Code Review (optional)
+
+Check if review already exists:
+```bash
+[ -s rounds/R{N:02d}_codex_review.md ] && echo "EXISTS" || echo "NEEDED"
+```
+
+If NEEDED, run:
+```bash
+python codex_review.py --round N
+```
+
+This sends the six model pipeline scripts to OpenAI GPT-4o for a code review. It is **optional** — if `OPENAI_API_KEY` is not set in `.env` or the environment, it will output `REVIEW_SKIPPED` and write a skipped notice to the round file. Do not block the pipeline on this step.
+
+- If `REVIEW_PASS` or `REVIEW_SKIPPED`: proceed to Step 4.
+- If `REVIEW_FAIL`: log the failure reason in the round summary, but still proceed. The Analyst will note any code quality concerns flagged by the reviewer.
 
 ---
 
@@ -207,13 +229,14 @@ ls -la rounds/R{N:02d}_*.md results/report.md results/report.pptx 2>/dev/null
 Print a summary:
 ```
 Round N complete.
-  Data Explorer: rounds/R01_data_exploration.md [skipped if Round 2+]
-  Tuner:         [CONFIG_UPDATED / NO_CHANGE / skipped]
-  Models:        ridge, pymc, lightweight_mmm
-  Analyst:       rounds/R{N:02d}_analysis.md
-  Critic:        [APPROVED / APPROVED after revision]
-  Reporter:      results/report.md + results/report.pptx
-  Proofreader:   [CLEAN / CORRECTED]
+  Data Explorer:  rounds/R01_data_exploration.md [skipped if Round 2+]
+  Tuner:          [CONFIG_UPDATED / NO_CHANGE / skipped]
+  Codex Review:   rounds/R{N:02d}_codex_review.md [PASS / FAIL / SKIPPED]
+  Models:         ridge, pymc, lightweight_mmm
+  Analyst:        rounds/R{N:02d}_analysis.md
+  Critic:         [APPROVED / APPROVED after revision]
+  Reporter:       results/report.md + results/report.pptx
+  Proofreader:    [CLEAN / CORRECTED]
 ```
 
 The round is done. Ask the user: "Run another round? (y/n)"
