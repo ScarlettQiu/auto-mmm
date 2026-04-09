@@ -35,11 +35,16 @@ def roi_comparison(results: dict) -> pd.DataFrame:
         return pd.DataFrame()
 
     df = pd.DataFrame(rows).pivot(index="channel", columns="model", values="roi")
-    df["mean_roi"]   = df.mean(axis=1)
-    df["std_roi"]    = df.std(axis=1)
+    # Flag channels where any model returned negative ROI (data quality signal)
+    model_cols = [c for c in df.columns if c not in ("mean_roi", "std_roi", "cv_pct", "agreement")]
+    df["has_negative"] = (df[model_cols] < 0).any(axis=1)
+    df["mean_roi"]   = df[model_cols].mean(axis=1)
+    df["std_roi"]    = df[model_cols].std(axis=1)
     df["cv_pct"]     = (df["std_roi"] / (df["mean_roi"].abs() + 1e-8) * 100).round(1)
-    df["agreement"]  = df["cv_pct"].apply(
-        lambda x: "✅ High" if x < 20 else ("⚠️ Medium" if x < 50 else "❌ Low")
+    df["agreement"]  = df.apply(
+        lambda row: "⚠️ Negative ROI" if row["has_negative"]
+        else ("✅ High" if row["cv_pct"] < 20 else ("⚠️ Medium" if row["cv_pct"] < 50 else "❌ Low")),
+        axis=1,
     )
     return df.round(4).sort_values("mean_roi", ascending=False)
 
@@ -57,8 +62,14 @@ def contribution_comparison(results: dict) -> pd.DataFrame:
         return pd.DataFrame()
 
     df = pd.DataFrame(rows).pivot(index="channel", columns="model", values="contribution_pct")
-    df["mean_pct"] = df.mean(axis=1)
-    df["spread"]   = df.max(axis=1) - df.min(axis=1)
+    model_cols = [c for c in df.columns if c not in ("mean_pct", "spread")]
+    df["mean_pct"] = df[model_cols].mean(axis=1)
+    df["spread"]   = df[model_cols].max(axis=1) - df[model_cols].min(axis=1)
+    # Warn if any model's contributions don't sum to ~100%
+    for col in model_cols:
+        total = df[col].sum()
+        if not (80 <= total <= 120):  # allow some slack for baseline exclusion
+            print(f"  [WARNING] {col} contributions sum to {total:.1f}% (expected ~100%)")
     return df.round(2).sort_values("mean_pct", ascending=False)
 
 
