@@ -183,13 +183,9 @@ def main():
     files = [Path(f) for f in args.files] if args.files else [Path(f) for f in DEFAULT_FILES]
     round_num = args.round
 
-    # Idempotency check
     rounds_dir = Path("rounds")
     rounds_dir.mkdir(exist_ok=True)
     out_path = rounds_dir / f"R{round_num:02d}_codex_review.md"
-    if out_path.exists() and out_path.stat().st_size > 0:
-        print(f"Review already exists: {out_path} — skipping.")
-        return
 
     print(f"\nMulti-Model Code Review — Round {round_num}")
     print(f"Files:  {[str(f) for f in files]}")

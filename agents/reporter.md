@@ -12,6 +12,7 @@ You will be given:
 - Round number N
 - `rounds/R{N:02d}_analysis.md` — Analyst's interpretation (approved by Critic)
 - `rounds/R{N:02d}_review.md` — Critic's review (contains any caveats to include)
+- `rounds/R{N:02d}_codex_review.md` — Code review by GPT-4o and Claude (if it exists)
 - `results/roi_comparison.csv`
 - `results/contribution_comparison.csv`
 - `results/model_fit.csv`
@@ -69,9 +70,15 @@ Read all files. Do not just copy the Analyst's text — rewrite it for a non-tec
 - [ ] Collect weekly data for the next 12 months
 - [ ] [Any other specific action]
 
+## Code Review Summary
+[Only include if rounds/R{N:02d}_codex_review.md exists and was not fully skipped]
+**Automated code review verdict:** [PASS / FAIL / SKIPPED]
+[If FAIL: one sentence on what was flagged — e.g. "The automated reviewer flagged potential
+ edge cases in spend validation; these were reviewed and do not affect this round's results."]
+
 ---
 *Analysis powered by 3 MMM models: Ridge regression, Bayesian (PyMC), and Google LightweightMMM.
-Results reviewed by automated critic agent before publication.*
+Results reviewed by automated critic agent and multi-model code review before publication.*
 ```
 
 ### 2. Run the report builder to generate the PowerPoint
