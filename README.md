@@ -12,6 +12,7 @@ The five specialist agents keep roles separated so no single agent can both prod
 |---|---|---|
 | **Data Explorer** | EDA before training — collinearity, anomalies, VIF, readiness score | `rounds/R01_data_exploration.md` |
 | **Tuner** | Proposes one config change per round based on prior fit metrics | Updated `config.json` |
+| **Codex Reviewer** | Sends pipeline scripts to GPT-4o + Claude for automated code review before each run | `rounds/R{N}_codex_review.md` |
 | **Analyst** | Interprets ROI, contributions, and model agreement into a business narrative | `rounds/R{N}_analysis.md` |
 | **Critic** | Runs 6 quality checks — overfitting, sign correctness, plausibility, consensus honesty, collinearity, sample size | `APPROVED` or `REVISE` |
 | **Reporter** | Rewrites the approved analysis in plain English for a CMO audience, generates deck | `report.md` + `report.pptx` |
@@ -42,6 +43,13 @@ ORCHESTRATOR (program.md)  ← reads state.json, coordinates all agents
         │       Proposes one config change per round — adstock decay, Hill slope,
         │       or PyMC samples. Edits config.json directly.
         │       Returns: CONFIG_UPDATED or NO_CHANGE
+        │
+        ├── CODEX REVIEWER (codex_review.py)         ← every round (optional)
+        │       Sends 6 pipeline scripts to GPT-4o and Claude in parallel.
+        │       Checks for bugs, statistical errors, and MMM-specific risks.
+        │       Skipped gracefully if no API keys are set.
+        │       Returns: REVIEW_PASS, REVIEW_FAIL, or REVIEW_SKIPPED
+        │       Findings included in the final report.md each round.
         │
         ├── run_models.py
         │       Runs all 3 MMM models in sequence:
@@ -86,8 +94,8 @@ ORCHESTRATOR (program.md)  ← reads state.json, coordinates all agents
 
 **Flow each round:**
 ```
-Round 1:  Data Explorer → [skip Tuner] → Models → Analyst → Critic → Reporter
-Round 2+: [skip Explorer] → Tuner → Models → Analyst → Critic → Reporter
+Round 1:  Data Explorer → [skip Tuner] → Codex Reviewer → Models → Analyst → Critic → Reporter → Proofreader
+Round 2+: [skip Explorer] → Tuner → Codex Reviewer → Models → Analyst → Critic → Reporter → Proofreader
 ```
 
 ---
@@ -353,6 +361,7 @@ Only runs after `APPROVED`. Plain English, no jargon, no model names in the head
 | `rounds/R{N}_tuning.md` | Tuner's config change log |
 | `rounds/R{N}_analysis.md` | Analyst's interpretation |
 | `rounds/R{N}_review.md` | Critic's six-check review |
+| `rounds/R{N}_codex_review.md` | Multi-model code review (GPT-4o + Claude) |
 | `state.json` | Current round, best scores, run history |
 
 ---
@@ -368,6 +377,7 @@ prismmmm/
 ├── prepare.py              ← multi-source data loader (CSV / BigQuery / GSheet)
 ├── run_models.py           ← runs all 3 models, saves results
 ├── compare.py              ← ROI/contribution comparison, agreement scoring
+├── codex_review.py         ← multi-model code review (GPT-4o + Claude) each round
 ├── report_builder.py       ← generates report.md + report.pptx
 ├── state.json              ← round counter, best scores
 ├── data_dictionary.csv     ← optional: your column descriptions (imported by discover.py)
