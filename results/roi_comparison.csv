@@ -1,0 +1,9 @@
+channel,lightweight_mmm,pymc,ridge,mean_roi,std_roi,cv_pct,agreement
+meta_other,0.0,-0.0,264.2174,88.0725,124.5533,141.4,❌ Low
+google_shopping,41.1114,-0.0,16.7001,19.2705,16.8818,87.6,❌ Low
+google_search,0.0,-0.0,40.0696,13.3565,18.889,141.4,❌ Low
+meta_instagram,2.6735,0.0,1.2977,1.3237,1.0916,82.5,❌ Low
+meta_facebook,1.7309,-0.0,1.4767,1.0692,0.7631,71.4,❌ Low
+google_pmax,0.0,0.0,0.4417,0.1472,0.2082,141.4,❌ Low
+google_video,0.0,0.0,-4.0132,-1.3377,1.8918,141.4,❌ Low
+google_display,0.0,0.0,-51.03,-17.01,24.0558,141.4,❌ Low

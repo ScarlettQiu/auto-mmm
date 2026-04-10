@@ -1,0 +1,9 @@
+channel,lightweight_mmm,pymc,ridge,mean_pct,spread
+meta_facebook,41.97,-0.0,35.81,25.93,41.97
+meta_instagram,19.96,0.0,9.69,9.88,19.96
+google_search,0.0,-0.0,21.82,7.27,21.82
+google_shopping,4.68,-0.0,1.9,2.19,4.68
+meta_other,0.0,-0.0,4.59,1.53,4.59
+google_pmax,0.0,0.0,1.04,0.35,1.04
+google_video,0.0,0.0,-2.86,-0.95,2.86
+google_display,0.0,0.0,-13.51,-4.5,13.51

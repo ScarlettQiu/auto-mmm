@@ -5,8 +5,5 @@ __pycache__/
 venv/
 .DS_Store
 results/report.pptx
-results/report.md
-results/latest.json
-results/*.csv
 rounds/
 state.json
