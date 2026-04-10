@@ -57,7 +57,10 @@ def _run_lightweight(train_df, test_df, cfg, lightweight_mmm, preprocessing, jnp
     )
 
     media_contribution, baseline = mmm.get_contribution_decomposition(media_s)
-    media_contribution_original = scaler_target.inverse_transform(media_contribution)
+    # media_contribution is in scaled target space — multiply by target mean to recover original scale
+    # (scaler_target divides by mean, so inverse is multiply by mean)
+    target_mean = float(target.mean()) if float(target.mean()) != 0 else 1.0
+    media_contribution_original = media_contribution * target_mean
 
     total_kpi = float(target.sum())
     channel_contribs = {}

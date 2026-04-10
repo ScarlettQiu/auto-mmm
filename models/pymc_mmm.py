@@ -98,9 +98,9 @@ def run(
 
         import numpy as _np
         ppc_train = mmm.sample_posterior_predictive(X_train, combined=True, original_scale=True)
-        y_pred_train = _np.array(ppc_train["y"]).mean(axis=1)  # shape (dates, samples) → (dates,)
+        y_pred_train = _np.array(ppc_train["y"]).mean(axis=0)  # shape (samples, dates) → (dates,)
         ppc_test = mmm.sample_posterior_predictive(X_test, combined=True, original_scale=True)
-        y_pred_test = _np.array(ppc_test["y"]).mean(axis=1)
+        y_pred_test = _np.array(ppc_test["y"]).mean(axis=0)
 
         total_kpi = float(y_train.sum())
         contributions = mmm.compute_channel_contribution_original_scale()
