@@ -1,9 +1,9 @@
 channel,lightweight_mmm,pymc,ridge,mean_pct,spread
-meta_facebook,41.97,-0.0,35.81,25.93,41.97
-meta_instagram,19.96,0.0,9.69,9.88,19.96
-google_search,0.0,-0.0,21.82,7.27,21.82
-google_shopping,4.68,-0.0,1.9,2.19,4.68
-meta_other,0.0,-0.0,4.59,1.53,4.59
-google_pmax,0.0,0.0,1.04,0.35,1.04
-google_video,0.0,0.0,-2.86,-0.95,2.86
-google_display,0.0,0.0,-13.51,-4.5,13.51
+meta_facebook,41.97,-0.0,35.73,25.9,41.97
+meta_instagram,19.85,0.0,9.61,9.82,19.85
+google_search,0.0,-0.0,22.11,7.37,22.11
+google_shopping,4.68,0.0,1.9,2.19,4.68
+meta_other,0.0,-0.0,4.68,1.56,4.68
+google_pmax,0.0,0.0,1.07,0.36,1.07
+google_video,0.0,0.0,-3.07,-1.02,3.07
+google_display,0.0,0.0,-13.41,-4.47,13.41
