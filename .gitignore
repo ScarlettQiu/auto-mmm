@@ -5,5 +5,6 @@ __pycache__/
 venv/
 .DS_Store
 results/report.pptx
-rounds/
+rounds/*.md
+rounds/*_codex_review.md
 state.json
