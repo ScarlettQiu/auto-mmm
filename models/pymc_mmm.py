@@ -105,8 +105,8 @@ def _run_pymc(
         import pytensor
         # Use clang if available (macOS without g++) — dramatically faster than pure Python
         import shutil
-        if shutil.which("clang") and not shutil.which("g++"):
-            pytensor.config.cxx = "clang"
+        if shutil.which("clang++") and not shutil.which("g++"):
+            pytensor.config.cxx = "clang++"
         elif not shutil.which("g++"):
             pytensor.config.cxx = ""
 
@@ -133,17 +133,29 @@ def _run_pymc(
         )
 
         import numpy as _np
+
+        def _ppc_mean(ppc_arr, n_periods):
+            # With combined=True, ppc["y"] is (dates, samples) — average over axis=1
+            arr = _np.array(ppc_arr)
+            if arr.ndim == 2:
+                return arr.mean(axis=1) if arr.shape[0] == n_periods else arr.mean(axis=0)
+            return arr.mean(axis=tuple(i for i in range(arr.ndim - 1)))  # last dim = dates
+
         ppc_train = mmm.sample_posterior_predictive(X_train, combined=True, original_scale=True)
-        y_pred_train = _np.array(ppc_train["y"]).mean(axis=0)  # shape (samples, dates) → (dates,)
+        y_pred_train = _ppc_mean(ppc_train["y"], len(y_train))
         ppc_test = mmm.sample_posterior_predictive(X_test, combined=True, original_scale=True)
-        y_pred_test = _np.array(ppc_test["y"]).mean(axis=0)
+        y_pred_test = _ppc_mean(ppc_test["y"], len(X_test))
 
         total_kpi = float(y_train.sum())
         contributions = mmm.compute_channel_contribution_original_scale()
+        # dims: (chain, draw, date, channel) — mean over chain+draw, then sum over date
         channel_contribs = {}
         for ch in valid_channels:
             try:
-                channel_contribs[ch] = float(contributions.sel(channel=ch).values.sum())
+                sel = contributions.sel(channel=ch)
+                # squeeze out chain/draw dims, sum over date
+                vals = sel.mean(dim=[d for d in sel.dims if d != "date"]).values
+                channel_contribs[ch] = float(vals.sum())
             except Exception:
                 channel_contribs[ch] = 0.0
 
@@ -182,8 +194,8 @@ def _fallback_pymc(train_df, test_df, cfg, original_error: str) -> dict:
     try:
         import pymc as pm
         import pytensor, shutil
-        if shutil.which("clang") and not shutil.which("g++"):
-            pytensor.config.cxx = "clang"
+        if shutil.which("clang++") and not shutil.which("g++"):
+            pytensor.config.cxx = "clang++"
         elif not shutil.which("g++"):
             pytensor.config.cxx = ""
 
